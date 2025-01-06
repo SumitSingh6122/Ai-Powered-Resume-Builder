@@ -1,0 +1,194 @@
+import React from 'react';
+import Select from 'react-select';
+import { Briefcase, Plus, Sparkles, Trash2 } from 'lucide-react';
+import { useResumeStore } from '../../../../Store/useResumeStore';
+import CustomEditor from '../RichTextEditor';
+import { AichatSession } from '@/Pages/Service/geminiapi';
+
+// Helper to generate Month-Year options
+const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFullYear()) => {
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+  const options = [];
+  for (let year = startYear; year <= endYear; year++) {
+    for (let month of months) {
+      options.push({ value: `${month} ${year}`, label: `${month} ${year}` });
+    }
+  }
+  options.push({ value: 'Present', label: 'Present' }); // Add "Present" option
+  return options;
+};
+
+export default function Experience() {
+  const { experience, addExperience, updateExperience, removeExperience } = useResumeStore();
+
+  const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
+ const GenerateWorkSummary= async({position})=>{
+    prompt=`position titile: ${position} , Depends on position title give me 5-7 bullet points for my experience in resume (Please do not add experince level and No JSON array) , give me result in bullet `
+    const result = await AichatSession.sendMessage(prompt);
+          const data = await result.response.text();
+          console.log("data",data)
+          updateExperience( { ...exp, description: data })
+          
+ }
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      backgroundColor: '#374151', // bg-gray-700
+      borderColor: '#4B5563', // border-gray-600
+      borderRadius: '0.5rem', // rounded-lg
+      padding: '0.25rem', // p-1
+      color: 'white',
+      ':hover': {
+        borderColor: '#3B82F6', // hover:border-blue-500
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      backgroundColor: '#1F2937', 
+      borderRadius: '0.5rem', 
+      color: '#D1D5DB', 
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? '#3B82F6' : '#1F2937', 
+      color: state.isFocused ? '#FFFFFF' : '#D1D5DB', 
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: '#FFFFFF', 
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: '#9CA3AF', 
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: '#9CA3AF', 
+      ':hover': {
+        color: '#3B82F6', 
+      },
+    }),
+  };
+
+  return (
+    <div className="bg-gray-800/50 rounded-xl p-6">
+      <h2 className="text-xl font-semibold text-white flex items-center mb-4">
+        <Briefcase className="w-5 h-5 mr-2 text-blue-400" />
+        Work Experience
+      </h2>
+
+      <div className="space-y-6">
+        {experience.map((exp, index) => (
+          <div key={index} className="space-y-4 bg-gray-700/30 p-4 rounded-lg">
+            <div className="flex justify-between">
+              <h3 className="text-lg text-white">Experience #{index + 1}</h3>
+              <button
+                type="button"
+                onClick={() => removeExperience(index)}
+                className="text-red-400 hover:text-red-300"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  value={exp.company}
+                  onChange={(e) => updateExperience(index, { ...exp, company: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                  placeholder="Company Name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Position
+                </label>
+                <input
+                  type="text"
+                  value={exp.position}
+                  onChange={(e) => updateExperience(index, { ...exp, position: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                  placeholder="Job Title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Start Date
+                </label>
+                <Select
+                  options={monthYearOptions}
+                  value={monthYearOptions.find((opt) => opt.value === exp.startDate)}
+                  onChange={(option) =>
+                    updateExperience(index, { ...exp, startDate: option.value })
+                  }
+                  styles={customStyles}
+                  placeholder="Start Date"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  End Date
+                </label>
+                <Select
+                  options={monthYearOptions}
+                  value={monthYearOptions.find((opt) => opt.value === exp.endDate)}
+                  onChange={(option) =>
+                    updateExperience(index, { ...exp, endDate: option.value })
+                  }
+                  styles={customStyles}
+                  placeholder="End Date"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <div className='flex items-center   content-around justify-between'>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Work Description
+                </label>
+                <button
+          type="button"
+         onClick={()=>GenerateWorkSummary(exp.position)}
+          className="mb-2 px-3 py-2 bg-blue-500 rounded text-white hover:bg-blue-700 transition-colors flex items-center"
+        >
+          <Sparkles className="h-5 w-5 mr-2" />
+          Generate Description
+        </button></div>
+                <textarea
+                  value={exp.description}
+                  onChange={(e) => updateExperience(index, { ...exp, description: e.target.value })}
+                  rows={3}
+                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                  placeholder="Describe your responsibilities and achievements"
+                />
+         
+
+ 
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={addExperience}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+      >
+        <Plus className="w-5 h-5 mr-2" />
+        Add Experience
+      </button>
+    </div>
+  );
+}
