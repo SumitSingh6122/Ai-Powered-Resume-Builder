@@ -133,7 +133,7 @@ const Summary = () => {
             <div className='ml-3 '>
               <input
                 className={`text-white px-3 py-4 border-b-2 w-72 outline-none bg-transparent ${isPositionFocused ? 'border-blue-500' : 'border-gray-600'}`}
-                placeholder='e.g. Java Developer'
+                placeholder='e.g. Full Stack Developer'
                 onChange={(e)=>updatePosition(e.target.value)}
                 onFocus={() => setIsPositionFocused(true)}
                 onBlur={() => setIsPositionFocused(false)}

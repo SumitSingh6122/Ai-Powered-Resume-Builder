@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Select from 'react-select';
 import { Briefcase, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useResumeStore } from '../../../../Store/useResumeStore';
@@ -23,27 +23,56 @@ const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFull
 
 export default function Experience() {
   const { experience, addExperience, updateExperience, removeExperience } = useResumeStore();
+  const [AiworkDescription,SetAiworkDescription]=useState([]);
 
   const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
- const GenerateWorkSummary= async({position})=>{
-    prompt=`position titile: ${position} , Depends on position title give me 5-7 bullet points for my experience in resume (Please do not add experince level and No JSON array) , give me result in bullet `
-    const result = await AichatSession.sendMessage(prompt);
-          const data = await result.response.text();
-          console.log("data",data)
-          updateExperience( { ...exp, description: data })
-          
- }
+  const GenerateWorkSummary = async ({ position }) => {
+    const prompt = `position title: ${position}, Depending on the position title, give me 4-5 bullet points for my experience in a resume (Please give that in array format, not JSON). Provide the result as bullet points.`;
+    try {
+      const result = await AichatSession.sendMessage(prompt);
+      const data = await result.response.text();
+      let cleanData = data.replace(/```json|```/g, '').trim();
+  
+      
+     
+      cleanData = cleanData.replace(/(\w+):/g, '"$1":');  
+    
+      cleanData = cleanData.replace(/'([^']+)'/g, '"$1"');  
+  
+      
+      cleanData = cleanData.replace(/,\s*}/g, '}'); 
+      cleanData = cleanData.replace(/,\s*]/g, ']'); 
+  
+     
+      if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
+        try {
+          const parsedData = JSON.parse(cleanData);
+          SetAiworkDescription(parsedData);
+          console.log("Parsed AI summary:", parsedData);
+        } catch (error) {
+          console.error("Error parsing JSON response:", error);
+        }
+      } else {
+        console.error("Invalid JSON format:", cleanData);
+      }
 
+
+
+    } catch (error) {
+      console.error("Error generating work summary:", error);
+    }
+  };
+  
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      backgroundColor: '#374151', // bg-gray-700
-      borderColor: '#4B5563', // border-gray-600
-      borderRadius: '0.5rem', // rounded-lg
-      padding: '0.25rem', // p-1
+      backgroundColor: '#374151',
+      borderColor: '#4B5563', 
+      borderRadius: '0.5rem', 
+      padding: '0.25rem', 
       color: 'white',
       ':hover': {
-        borderColor: '#3B82F6', // hover:border-blue-500
+        borderColor: '#3B82F6', 
       },
     }),
     menu: (provided) => ({
@@ -172,11 +201,24 @@ export default function Experience() {
                   className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
                   placeholder="Describe your responsibilities and achievements"
                 />
-         
-
- 
               </div>
-            </div>
+
+            </div> 
+
+            {AiworkDescription.map((Des, index) => (
+  <div className="bg-gray-600 mt-1 rounded p-2 flex" key={index}>
+    <p className="text-white text-sm">{Des}</p>
+    <button
+      type="button"
+      className="px-3 py-2 bg-blue-500 rounded text-white hover:bg-blue-700 transition-colors mt-2"
+    >
+      <Plus />
+    </button>
+  </div>
+))}
+
+
+            
           </div>
         ))}
       </div>

@@ -9,6 +9,7 @@ import Dashbord from './Pages/Dashboard/Dashbord';
 import EditResume from './Pages/Dashboard/resume/[resumeId]/edit';
 import ResumePreview from './Pages/Dashboard/resume/Component/ResumePreview';
 
+
 function App() {
   
 
@@ -18,7 +19,7 @@ function App() {
     <BrowserRouter>
     <Header/>
    <Routes>
-    
+  
     <Route path='/' element={<Home/>} />
    
     <Route path='/auth/sign-in' element={<SignIn/>} />
