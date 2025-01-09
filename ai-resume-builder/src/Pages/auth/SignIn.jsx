@@ -72,7 +72,7 @@ const SignIn = () => {
         : { username, email, password }; 
   
       const endpoint = isSignIn ? '/login' : '/register';
-      const res = await axios.post(`http://localhost:3000/api/v1${endpoint}`, formData);
+      const res = await axios.post(`https://ai-powered-resume-builder-tnzl.vercel.app/api/v1${endpoint}`, formData);
   
       if (isSignIn) {
         const { user, token } = res.data;
