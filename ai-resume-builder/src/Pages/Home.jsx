@@ -17,9 +17,6 @@ const Home = () => {
     
   <Templates/>
      <Features/>
-   
-  
-    
   <Footer/>
     </div>
   )

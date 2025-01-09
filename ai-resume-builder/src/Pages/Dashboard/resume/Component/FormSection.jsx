@@ -7,6 +7,7 @@ import EducationDetail from './Forms/EducationDetail';
 import ProjectsSection from './Forms/ProjectDetail';
 
 import { SkillsSection } from './Forms/Skills';
+import { AchievementsSection } from './Forms/Achivement';
 
 export default function FormSection() {
   const [count, setCount] = useState(1);
@@ -25,6 +26,7 @@ export default function FormSection() {
     <EducationDetail/>,
     <ProjectsSection/>,
     <SkillsSection/>,
+    <AchievementsSection/>
   ];
 
   return (

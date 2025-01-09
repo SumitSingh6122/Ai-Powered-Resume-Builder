@@ -63,12 +63,12 @@ export const useResumeStore = create((set) => {
     certifications: [
       {
         name: 'Certified JavaScript Developer',
-        organization: 'TechCertify',
+        description: 'TechCertify',
         date: 'March 2023',
       },
       {
         name: 'AWS Certified Solutions Architect',
-        organization: 'Amazon Web Services',
+       description: 'Amazon Web Services',
         date: 'June 2022',
       },
     ],

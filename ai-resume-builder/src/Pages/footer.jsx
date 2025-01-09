@@ -127,9 +127,9 @@ const Footer = () => {
                 href: "https://github.com/SumitSingh6122",
               },
             ].map((item, index) => (
-              <li key={index}>
+              <li key={index} className=" z-50">
                 <a href={item.href} target="_blank" rel="noopener noreferrer" >
-                <div  className={`${iconStyles} hover:bg-red-600`}>{item.icon}</div>
+                <div  className={`${iconStyles} hover:text-[#0ef] hover:bg-transparent`}>{item.icon}</div>
 
                 </a>
               </li>
@@ -137,7 +137,7 @@ const Footer = () => {
           </ul>
 
           <p className="w-full mt-8 text-sm text-center text-gray-100 md:mt-0 md:w-auto md:order-2">
-            © Copyright 2024, All Rights Reserved by Ai Resume Builder
+            © Copyright 2025, All Rights Reserved by Ai Resume Builder
           </p>
         </div>
       </div>

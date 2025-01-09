@@ -4,6 +4,7 @@ import { Briefcase, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useResumeStore } from '../../../../Store/useResumeStore';
 import CustomEditor from '../RichTextEditor';
 import { AichatSession } from '@/Pages/Service/geminiapi';
+import RichTextEditor from '../RichTextEditor';
 
 // Helper to generate Month-Year options
 const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFullYear()) => {
@@ -31,19 +32,22 @@ export default function Experience() {
     try {
       const result = await AichatSession.sendMessage(prompt);
       const data = await result.response.text();
-      let cleanData = data.replace(/```json|```/g, '').trim();
   
-      
-     
-      cleanData = cleanData.replace(/(\w+):/g, '"$1":');  
-    
-      cleanData = cleanData.replace(/'([^']+)'/g, '"$1"');  
+      // Ensure `data` is a string before processing
+      if (typeof data !== "string") {
+        console.error("Expected a string but received:", data);
+        return;
+      }
   
-      
-      cleanData = cleanData.replace(/,\s*}/g, '}'); 
-      cleanData = cleanData.replace(/,\s*]/g, ']'); 
+      let cleanData = data.replace(/```json|```/g, "").trim();
   
-     
+      // Replace with valid JSON syntax
+      cleanData = cleanData.replace(/(\w+):/g, '"$1":');
+      cleanData = cleanData.replace(/'([^']+)'/g, '"$1"');
+      cleanData = cleanData.replace(/,\s*}/g, "}");
+      cleanData = cleanData.replace(/,\s*]/g, "]");
+  
+      // Ensure `cleanData` is JSON parsable
       if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
         try {
           const parsedData = JSON.parse(cleanData);
@@ -55,13 +59,12 @@ export default function Experience() {
       } else {
         console.error("Invalid JSON format:", cleanData);
       }
-
-
-
     } catch (error) {
       console.error("Error generating work summary:", error);
-    }
+    };
+  
   };
+ 
   
   const customStyles = {
     control: (provided) => ({
@@ -201,6 +204,7 @@ export default function Experience() {
                   className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
                   placeholder="Describe your responsibilities and achievements"
                 />
+                <RichTextEditor/>
               </div>
 
             </div> 
