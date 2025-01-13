@@ -5,6 +5,9 @@ import { useResumeStore } from '../../../../Store/useResumeStore';
 import CustomEditor from '../RichTextEditor';
 import { AichatSession } from '@/Pages/Service/geminiapi';
 import RichTextEditor from '../RichTextEditor';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; 
+
 
 // Helper to generate Month-Year options
 const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFullYear()) => {
@@ -25,10 +28,17 @@ const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFull
 export default function Experience() {
   const { experience, addExperience, updateExperience, removeExperience } = useResumeStore();
   const [AiworkDescription,SetAiworkDescription]=useState([]);
+  const [content, setContent] = useState();
+ 
+  const handleChange = (index, value) => {
+    updateExperience(index, { ...experience[index], description: value });
+    console.log(index,value);
+   
+  };
 
   const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
   const GenerateWorkSummary = async ({ position }) => {
-    const prompt = `position title: ${position}, Depending on the position title, give me 4-5 bullet points for my experience in a resume (Please give that in array format, not JSON). Provide the result as bullet points.`;
+    const prompt = `position title: ${position}, Depending on the position title, give me 4-5 bullet points for my experience in a resume (Please give that in array format, not JSON  and give only one array and do not give any text output ). Provide the result as bullet points.`;
     try {
       const result = await AichatSession.sendMessage(prompt);
       const data = await result.response.text();
@@ -144,7 +154,7 @@ export default function Experience() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Position
-                </label>
+              </label>
                 <input
                   type="text"
                   value={exp.position}
@@ -197,29 +207,31 @@ export default function Experience() {
           <Sparkles className="h-5 w-5 mr-2" />
           Generate Description
         </button></div>
-                <textarea
-                  value={exp.description}
-                  onChange={(e) => updateExperience(index, { ...exp, description: e.target.value })}
-                  rows={3}
-                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
-                  placeholder="Describe your responsibilities and achievements"
-                />
-                <RichTextEditor/>
+               
+        <ReactQuill
+               value={content}
+                onChange={(value) => handleChange(index, value)}
+                theme="snow"
+                className="h-40  bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+              />
+
               </div>
 
             </div> 
 
             {AiworkDescription.map((Des, index) => (
-  <div className="bg-gray-600 mt-1 rounded p-2 flex" key={index}>
+  <div className="bg-gray-600 mt-1 rounded p-2 flex" key={`${Des}-${index}`}>
     <p className="text-white text-sm">{Des}</p>
     <button
       type="button"
       className="px-3 py-2 bg-blue-500 rounded text-white hover:bg-blue-700 transition-colors mt-2"
+      onClick={() => setContent(Des)}
     >
       <Plus />
     </button>
   </div>
 ))}
+
 
 
             

@@ -45,3 +45,17 @@
   list-style: decimal;
   padding-left: 2em;
 }
+
+/* Custom styles for the React-Quill toolbar */
+.ql-toolbar {
+  background-color:gray/2; /* Change to your desired color */
+  color:white !important;
+   /* Change text color */
+ 
+}
+.ql-container{
+  height: 114px;
+}
+.ql-formates{
+color: white;
+}

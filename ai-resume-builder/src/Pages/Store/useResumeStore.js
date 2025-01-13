@@ -11,9 +11,9 @@ export const useResumeStore = create((set) => {
       link: 'linkedin.com/in/john-doe',
       website: 'https://johndoe.com', 
       GithubUrl:'www.github.com/sumit-singh',
-      // // Added personal website link
+    
     },
-
+  
     position:'Full stack developer',
     level:"fresher",
     ResumeTemplateId:'1',
@@ -88,12 +88,12 @@ export const useResumeStore = create((set) => {
   });
 
   return {
-    ...addDummyData(), // Add dummy data directly during store initialization
+    ...addDummyData(), 
 
-    // Add dummy data (optional method if needed for future use)
+    
     addDummyData: () => set(addDummyData),
 
-    // Define other store methods here
+   
     updatePersonalInfo: (info) =>
       set((state) => ({
         personalInfo: { ...state.personalInfo, ...info },
@@ -101,6 +101,8 @@ export const useResumeStore = create((set) => {
    updateResumeTemplateID:(ResumeTemplateId)=>set({ResumeTemplateId}),
    updateLevel: (level) => set({ level }),
     updateSummary: (summary) => set({ summary }),
+   
+
     updatePosition:(position)=>set({position}),
     addExperience: () =>
       set((state) => ({
@@ -197,6 +199,7 @@ export const useResumeStore = create((set) => {
           [category]: state.skills[category].filter((_, i) => i !== index),
         },
       })),
+    
 
     resetState: () =>
       set(() => ({
@@ -206,12 +209,17 @@ export const useResumeStore = create((set) => {
           phone: '',
           location: '',
           website: '',
+          GithubUrl:'',
+          link:'',
         },
         summary: '',
         experience: [],
         education: [],
         projects: [],
         certifications: [],
+        jobDescription:'',
+        AtsScore:'',
+        AtsKeyword:[],
         skills: {
           technical: [],
           soft: [],

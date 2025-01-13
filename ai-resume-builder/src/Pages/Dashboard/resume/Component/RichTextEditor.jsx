@@ -1,60 +1,24 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; 
 
-const RichTextEditor = () => {
-  const [content, setContent] = useState('');
-  const editorRef = useRef(null);
+const RichTextEditor = ({value}) => {
+  const [content, setContent] = useState({value});
 
-  // Execute formatting commands
-  const handleFormat = (command) => {
-    document.execCommand(command, false, null);
-  };
-
-  // Save content on input
-  const handleInput = () => {
-    setContent(editorRef.current.innerHTML);
+  const handleChange = (value) => {
+    setContent(value);
   };
 
   return (
-    <div className="text-editor">
-      {/* Toolbar */}
-      <div className="toolbar">
-        <button onClick={() => handleFormat('bold')}><b>B</b></button>
-        <button onClick={() => handleFormat('italic')}><i>I</i></button>
-        <button onClick={() => handleFormat('underline')}><u>U</u></button>
-        <button onClick={() => handleFormat('strikeThrough')}><s>S</s></button>
-        <button onClick={() => handleFormat('insertOrderedList')}>OL</button>
-        <button onClick={() => handleFormat('insertUnorderedList')}>UL</button>
-      </div>
 
-      {/* Editable Area */}
-      <div
-        ref={editorRef}
-        contentEditable
-        className="editor"
-        onInput={handleInput}
-        style={{
-          border: '1px solid #ccc',
-          minHeight: '200px',
-          padding: '10px',
-          borderRadius: '4px',
-          backgroundColor: '#f9f9f9',
-        }}
-        dangerouslySetInnerHTML={{ __html: content }}
-      ></div>
-
-      {/* Display Output */}
-      <div className="output">
-        <h3>Output:</h3>
-        <div
-          dangerouslySetInnerHTML={{ __html: content }}
-          style={{
-            border: '1px solid #eee',
-            padding: '10px',
-            backgroundColor: '#fff',
-          }}
-        ></div>
-      </div>
-    </div>
+      <ReactQuill
+        value={content}
+        onChange={handleChange}
+        theme="snow"
+        className="h-32 bg-gray-700/50 border border-gray-600 rounded text-xl focus:ring-2 focus:ring-blue-500 text-white"
+       
+      />
+   
   );
 };
 

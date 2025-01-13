@@ -64,8 +64,8 @@ export function ExecutiveTemplate() {
                 </div>
                 <span className="text-gray-600">{job.startDate} - {job.endDate}</span>
               </div>
-              <ul className="mt-2 space-y-2 text-gray-700">
-               {job.description}
+              <ul className="mt-2 space-y-2 text-gray-700" dangerouslySetInnerHTML={{ __html: exp.description }}>
+             
               </ul>
             </div>
           ))}

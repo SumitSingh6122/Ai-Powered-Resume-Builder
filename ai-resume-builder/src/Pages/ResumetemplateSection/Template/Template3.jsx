@@ -59,8 +59,8 @@ export  function MinimalTemplate() {
                 </div>
                 <span className="text-gray-600">{`${exp.startDate || ''} - ${exp.endDate || ''}`}</span>
               </div>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 mt-2">
-               {exp.description}
+              <ul className="list-disc list-inside text-gray-700 space-y-1 mt-2" dangerouslySetInnerHTML={{ __html: exp.description }}>
+              
               </ul>
             </div>
           ))}

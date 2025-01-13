@@ -72,7 +72,7 @@ export function ModernTemplate() {
                   </div>
                   <span className="text-gray-600 text-sm">{`${job.startDate || ''} - ${job.endDate || ''}`}</span>
                 </div>
-                <p className="mt-2 text-gray-700">{job.description}</p>
+                <p className="mt-2 text-gray-700" dangerouslySetInnerHTML={{ __html: exp.description }}></p>
            
               </div>
             ))

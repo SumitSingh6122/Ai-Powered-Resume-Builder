@@ -1,50 +1,137 @@
 import React, { useState } from 'react';
 import { FileText, Star, Cpu, KeyRound, X } from 'lucide-react';
+import { useResumeStore } from '@/Pages/Store/useResumeStore';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { AichatSession } from '@/Pages/Service/geminiapi';
 
 export default function ResumeCreateHeader() {
   const [activeTab, setActiveTab] = useState('description');
   const [isBoxOpen, setIsBoxOpen] = useState(false);
-  const [keywords, setKeywords] = useState(['Leadership', 'Project Management', 'React']);
+  const [AtScores,setAtsScore]=useState();
+  const [AtSKeywords,setAtsKeyword]=useState([]);
+  const[visible,setvisible]=useState(false);
+  const [loading,setloading]=useState(false);
+  const [jobDescription,setJobDescription]=useState();
+  
+  const {
+    personalInfo,
+ 
+    position,
+    level,
+    summary,
+    experience,
+    education,
+    projects,
+    certifications,
+    skills,
+  } = useResumeStore();
 
-  const generateKeywords = () => {
-    const suggestedKeywords = [
-      'TypeScript', 'Node.js', 'DevOps', 'Agile', 'Team Leadership',
-      'Problem Solving', 'Communication', 'CI/CD', 'Cloud Computing',
-      'System Design', 'Data Analysis', 'Strategic Planning'
-    ];
-    const randomKeywords = suggestedKeywords
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 3);
-    setKeywords([...keywords, ...randomKeywords]);
+
+
+    
+   
+  const HandelAtsScore = async () => {
+    let prompt = `
+      Analyze the following resume and calculate its ATS (Applicant Tracking System) score based on its alignment with the role "${position}" at a "${level}" level in software development. Provide the following:
+      1. An ATS score out of 100.
+      2. A list of relevant keywords that improve ATS alignment.
+  
+      Here are the details:
+      - **Job Description**: ${jobDescription}
+      - **Position**: ${position}
+      - **Level**: ${level}
+      - **Summary**: ${summary}
+      - **Skills**: ${JSON.stringify(skills)}
+      - **Education**: ${JSON.stringify(education)}
+      - **Projects**: ${JSON.stringify(projects)}
+     
+  
+      Additional Information:
+      ${experience?.length > 0 ? `- **Experience**: ${JSON.stringify(experience)}` : ''}
+      ${certifications?.length > 0 ? `- **Certifications**: ${JSON.stringify(certifications)}` : ''}
+  
+      **Output Format**:
+      {
+        "atsScore": <number>, 
+        "atsKeywords": ["<keyword1>", "<keyword2>", ...]
+      }
+    `;
+  
+    try {
+      setloading(true);
+  
+      const result = await AichatSession.sendMessage(prompt);
+      const rawData = await result.response.text();
+  
+      // Clean up the response to ensure it's valid JSON
+      const cleanedData = rawData
+        .replace(/```json/g, '') // Remove any starting code block markers
+        .replace(/```/g, '');    // Remove any ending code block markers
+  
+      // Parse the cleaned JSON response
+      const data = JSON.parse(cleanedData);
+  
+      // Update state with ATS score and keywords
+      setAtsScore(data.atsScore);
+      setAtsKeyword(data.atsKeywords);
+      setvisible(true);
+    } catch (error) {
+      console.error("Error calculating ATS score:", error);
+    } finally {
+      setloading(false);
+    }
   };
-
+  
+  
   const renderContent = () => {
     switch (activeTab) {
       case 'description':
         return (
-          <textarea 
+          <div className=''>
+            <textarea 
+            value={jobDescription}
+          onChange={(e)=>setJobDescription(e.target.value)}
             className="w-full h-32 p-3 border rounded-lg bg-gray-800 text-white border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             placeholder="Enter your professional description..."
           />
+            
+          </div>
         );
       case 'ats-score':
         return (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Star className="text-yellow-500" />
-              <span className="text-lg font-semibold text-white">
-                ATS Score: 85/100
-              </span>
-            </div>
-            <p className="text-gray-300">
-              Your resume is well-optimized for ATS systems.
-            </p>
+          <div className="space-y-4 h-28">
+            <button onClick={HandelAtsScore} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
+              Check ATS Score
+            </button>
+            {loading ? (
+              <SkeletonTheme baseColor="#b3b1b1" highlightColor="#444">
+                <div className='h-3'>
+                  <Skeleton count={3} />
+                </div>
+              </SkeletonTheme>
+            ) : (
+              <div>
+                {visible && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <Star className="text-yellow-500" />
+                      <span className="text-lg font-semibold text-white">
+                        ATS Score: {AtScores}/100
+                      </span>
+                    </div>
+                    <p className="text-gray-300">
+                      Your resume is well-optimized for ATS systems.
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         );
       case 'ai-enhancement':
         return (
           <div className="space-y-4">
-            <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:opacity-90">
+            <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
               Enhance with AI
             </button>
             <p className="text-gray-300">
@@ -52,23 +139,49 @@ export default function ResumeCreateHeader() {
             </p>
           </div>
         );
+      case 'custom edit':
+        return(
+          <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          
+          className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+        >
+          <FileEdit className="w-4 h-4" />
+          Custom Edit
+        </motion.button>
+        )
+
       case 'ats-keywords':
         return (
           <div className="space-y-4">
-            
-            <div className="flex flex-wrap gap-2">
-              {keywords.map((keyword) => (
-                <span key={keyword} className="px-3 py-1 rounded text-lg bg-gray-700 text-white">
-                  {keyword}
-                </span>
-              ))}
-            </div>
+             <button onClick={HandelAtsScore} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
+              Check ATS Keyword
+            </button>
+            {loading ? (
+              <SkeletonTheme baseColor="#b3b1b1" highlightColor="#444">
+                <div className=''>
+                  <Skeleton count={2} />
+                </div>
+              </SkeletonTheme>
+            ) : (
+              <>
+                <div className="flex flex-wrap gap-2">
+                  {AtSKeywords.map((keyword) => (
+                    <span key={keyword} className="px-3 py-1 rounded text-lg bg-gray-700 text-white">
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         );
       default:
         return null;
     }
   };
+  
 
   return (
     <div className="w-full  p-3 pb-0 animate-fade-in bg-gray-900">
@@ -81,7 +194,7 @@ export default function ResumeCreateHeader() {
             </h2>
           </div>
           <div className="flex gap-4">
-            {['description', 'ats-score', 'ai-enhancement', 'ats-keywords'].map((tab) => (
+            {['description', 'ats-score', 'custom edit','ai-enhancement', 'ats-keywords'].map((tab) => (
               <button 
                 key={tab}
                 onClick={() => {

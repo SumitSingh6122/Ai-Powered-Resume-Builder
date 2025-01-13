@@ -139,7 +139,11 @@ export function CreativeTemplate() {
                     {exp.startDate} - {exp.endDate}
                   </span>
                 </div>
-                <p className="mt-2 text-gray-700">{exp.description}</p>
+                <p
+  dangerouslySetInnerHTML={{ __html: exp.description }}
+  className="mt-2 text-gray-700"
+/>
+
                 
               </div>
             ))}
