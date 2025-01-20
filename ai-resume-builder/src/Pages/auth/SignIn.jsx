@@ -53,7 +53,7 @@ const SignIn = () => {
     try {
       const endpoint = providerType === 'google' ? 'google-login' : 'github-login';
       console.log(providerType);
-      const res=await axios.post(`http://localhost:3000/api/v1/${endpoint}`, formData);
+      const res=await axios.post(`https://ai-powered-resume-builder.onrender.com/api/v1/${endpoint}`, formData);
       const { user, token } = res.data;
       dispatch(setUser({user,token, isAuthenticated: true }));
       toast.success('Login Successful!');
@@ -72,7 +72,7 @@ const SignIn = () => {
         : { username, email, password }; 
   
       const endpoint = isSignIn ? '/login' : '/register';
-      const res = await axios.post(`http://localhost:3000/api/v1${endpoint}`, formData);
+      const res = await axios.post(`https://ai-powered-resume-builder.onrender.com/api/v1${endpoint}`, formData);
   
       if (isSignIn) {
         const { user, token } = res.data;
