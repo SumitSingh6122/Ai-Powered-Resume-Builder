@@ -31,7 +31,8 @@ const templates = [
     name: 'Minimal Classic',
     description: 'Traditional layout with a modern minimal twist',
     preview: '/TemplateImage/template4.png'
-  }
+  },
+
 ];
 
 const container = {
@@ -70,7 +71,7 @@ export function Templates() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-1  gap-4"
         >
           {templates.map((template) => (
             <TemplateSection key={template.id} {...template} />

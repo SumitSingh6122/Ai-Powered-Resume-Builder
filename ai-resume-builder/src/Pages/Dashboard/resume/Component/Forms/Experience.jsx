@@ -1,19 +1,17 @@
-import React, { useState } from 'react';
-import Select from 'react-select';
-import { Briefcase, Plus, Sparkles, Trash2 } from 'lucide-react';
-import { useResumeStore } from '../../../../Store/useResumeStore';
-import CustomEditor from '../RichTextEditor';
-import { AichatSession } from '@/Pages/Service/geminiapi';
-import RichTextEditor from '../RichTextEditor';
+import React, { useState } from "react";
+import Select from "react-select";
+import { Briefcase, Plus, Sparkles, Trash2 } from "lucide-react";
+import { useResumeStore } from "../../../../Store/useResumeStore";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; 
+import "react-quill/dist/quill.snow.css";
+import { AichatSession } from "@/Pages/Service/geminiapi";
+import { FaSpinner } from "react-icons/fa";
 
 
-// Helper to generate Month-Year options
 const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFullYear()) => {
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
   ];
   const options = [];
   for (let year = startYear; year <= endYear; year++) {
@@ -21,97 +19,100 @@ const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFull
       options.push({ value: `${month} ${year}`, label: `${month} ${year}` });
     }
   }
-  options.push({ value: 'Present', label: 'Present' }); // Add "Present" option
+  options.push({ value: "Present", label: "Present" }); // Add "Present" option
   return options;
 };
 
 export default function Experience() {
   const { experience, addExperience, updateExperience, removeExperience } = useResumeStore();
-  const [AiworkDescription,SetAiworkDescription]=useState([]);
-  const [content, setContent] = useState();
- 
-  const handleChange = (index, value) => {
-    updateExperience(index, { ...experience[index], description: value });
-    console.log(index,value);
-   
-  };
-
+  const [content, setcontent] = useState();
+  const [loading, setloading] = useState(false);
+  const [aiWorkDescription, setaiWoekDescription] = useState([]);
   const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
-  const GenerateWorkSummary = async ({ position }) => {
-    const prompt = `position title: ${position}, Depending on the position title, give me 4-5 bullet points for my experience in a resume (Please give that in array format, not JSON  and give only one array and do not give any text output ). Provide the result as bullet points.`;
+
+  const handleChange = (index, value) => {
+    const updatedExperience = [...experience];
+    updatedExperience[index] = { ...updatedExperience[index], description: value };
+    updateExperience(index, updatedExperience[index]);
+    setcontent(value);
+  };
+  
+  const appendDescriptionToQuill = (index, description) => {
+    const currentContent = experience[index]?.description || ""; // Get current editor content
+    const newContent = `${currentContent}<ul><li>${description}</li></ul>`; // Append the new description
+    handleChange(index, newContent); // Update the state and editor content
+  }; 
+  
+  const GenerateWorkSummary = async (position, index) => {
+    // Set loading state for the current experience
+    const updatedExperience = [...experience];
+    updatedExperience[index] = { ...updatedExperience[index], isLoading: true };
+    updateExperience(index, updatedExperience[index]);
+
+    const prompt = `position title: ${position}, Depending on the position title, give me 4-5 bullet points for my experience in a resume (Please give that in array format, not JSON, and give only one array and do not give any text output).`;
+
     try {
       const result = await AichatSession.sendMessage(prompt);
       const data = await result.response.text();
-  
-      // Ensure `data` is a string before processing
-      if (typeof data !== "string") {
-        console.error("Expected a string but received:", data);
-        return;
-      }
-  
+
       let cleanData = data.replace(/```json|```/g, "").trim();
-  
-      // Replace with valid JSON syntax
-      cleanData = cleanData.replace(/(\w+):/g, '"$1":');
-      cleanData = cleanData.replace(/'([^']+)'/g, '"$1"');
-      cleanData = cleanData.replace(/,\s*}/g, "}");
-      cleanData = cleanData.replace(/,\s*]/g, "]");
-  
-      // Ensure `cleanData` is JSON parsable
       if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
-        try {
-          const parsedData = JSON.parse(cleanData);
-          SetAiworkDescription(parsedData);
-          console.log("Parsed AI summary:", parsedData);
-        } catch (error) {
-          console.error("Error parsing JSON response:", error);
-        }
+        const parsedData = JSON.parse(cleanData);
+
+        // Update the specific experience with AI-generated descriptions
+        updatedExperience[index] = {
+          ...updatedExperience[index],
+          aiDescriptions: parsedData,
+          isLoading: false,
+        };
+        updateExperience(index, updatedExperience[index]);
       } else {
-        console.error("Invalid JSON format:", cleanData);
+        console.error("Invalid AI response format:", cleanData);
       }
     } catch (error) {
       console.error("Error generating work summary:", error);
-    };
-  
+      updatedExperience[index] = { ...updatedExperience[index], isLoading: false };
+      updateExperience(index, updatedExperience[index]);
+    }
   };
- 
-  
+
+
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      backgroundColor: '#374151',
-      borderColor: '#4B5563', 
-      borderRadius: '0.5rem', 
-      padding: '0.25rem', 
-      color: 'white',
-      ':hover': {
-        borderColor: '#3B82F6', 
+      backgroundColor: "#374151",
+      borderColor: "#4B5563",
+      borderRadius: "0.5rem",
+      padding: "0.25rem",
+      color: "white",
+      ":hover": {
+        borderColor: "#3B82F6",
       },
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: '#1F2937', 
-      borderRadius: '0.5rem', 
-      color: '#D1D5DB', 
+      backgroundColor: "#1F2937",
+      borderRadius: "0.5rem",
+      color: "#D1D5DB",
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isFocused ? '#3B82F6' : '#1F2937', 
-      color: state.isFocused ? '#FFFFFF' : '#D1D5DB', 
+      backgroundColor: state.isFocused ? "#3B82F6" : "#1F2937",
+      color: state.isFocused ? "#FFFFFF" : "#D1D5DB",
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: '#FFFFFF', 
+      color: "#FFFFFF",
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: '#9CA3AF', 
+      color: "#9CA3AF",
     }),
     dropdownIndicator: (provided) => ({
       ...provided,
-      color: '#9CA3AF', 
-      ':hover': {
-        color: '#3B82F6', 
+      color: "#9CA3AF",
+      ":hover": {
+        color: "#3B82F6",
       },
     }),
   };
@@ -139,9 +140,7 @@ export default function Experience() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Company Name
-                </label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Company Name</label>
                 <input
                   type="text"
                   value={exp.company}
@@ -152,9 +151,7 @@ export default function Experience() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Position
-              </label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Position</label>
                 <input
                   type="text"
                   value={exp.position}
@@ -165,9 +162,7 @@ export default function Experience() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Start Date
-                </label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Start Date</label>
                 <Select
                   options={monthYearOptions}
                   value={monthYearOptions.find((opt) => opt.value === exp.startDate)}
@@ -180,9 +175,7 @@ export default function Experience() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  End Date
-                </label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">End Date</label>
                 <Select
                   options={monthYearOptions}
                   value={monthYearOptions.find((opt) => opt.value === exp.endDate)}
@@ -195,46 +188,54 @@ export default function Experience() {
               </div>
 
               <div className="md:col-span-2">
-                <div className='flex items-center   content-around justify-between'>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Work Description
-                </label>
-                <button
-          type="button"
-         onClick={()=>GenerateWorkSummary(exp.position)}
-          className="mb-2 px-3 py-2 bg-blue-500 rounded text-white hover:bg-blue-700 transition-colors flex items-center"
-        >
-          <Sparkles className="h-5 w-5 mr-2" />
-          Generate Description
-        </button></div>
-               
-        <ReactQuill
-               value={content}
-                onChange={(value) => handleChange(index, value)}
-                theme="snow"
-                className="h-40  bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
-              />
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Work Description</label>
+                  <button
+                    type="button"
+                    onClick={() => GenerateWorkSummary(exp.position, index)}
+                    disabled={exp.isLoading} // Disable button when loading
+                    className={`mb-2 px-3 py-2 rounded text-white flex items-center ${exp.isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-700"
+                      }`}
+                  >
+                    {exp.isLoading ? (
+                      <>
+                        <FaSpinner className="h-5 w-5 mr-2 animate-spin" /> Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-5 w-5 mr-2" /> Generate Description
+                      </>
+                    )}
+                  </button>
 
+                </div>
+
+                <ReactQuill
+                  value={content}
+
+                  onChange={(value) => handleChange(index, value)}
+                  theme="snow"
+                  className="h-40 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                />
               </div>
+            </div>
 
-            </div> 
+            {exp.aiDescriptions?.map((Des, descIndex) => (
+              <div
+                className="bg-gray-600 relative mt-1 rounded h-14 p-2 flex"
+                key={`${Des}-${descIndex}`}
+              >
+                <p className="text-white text-sm">{Des}</p>
+                <button
+                  type="button"
+                  className="px-3 py-2 bg-blue-500 absolute right-1 top-0 rounded text-white hover:bg-blue-700 transition-colors mt-2"
+                  onClick={() => appendDescriptionToQuill(index, Des)}
+                >
+                  <Plus />
+                </button>
+              </div>
+            ))}
 
-            {AiworkDescription.map((Des, index) => (
-  <div className="bg-gray-600 mt-1 rounded p-2 flex" key={`${Des}-${index}`}>
-    <p className="text-white text-sm">{Des}</p>
-    <button
-      type="button"
-      className="px-3 py-2 bg-blue-500 rounded text-white hover:bg-blue-700 transition-colors mt-2"
-      onClick={() => setContent(Des)}
-    >
-      <Plus />
-    </button>
-  </div>
-))}
-
-
-
-            
           </div>
         ))}
       </div>

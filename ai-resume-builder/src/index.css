@@ -45,17 +45,67 @@
   list-style: decimal;
   padding-left: 2em;
 }
-
-/* Custom styles for the React-Quill toolbar */
-.ql-toolbar {
-  background-color:gray/2; /* Change to your desired color */
-  color:white !important;
-   /* Change text color */
- 
+.ql-toolbar.ql-snow{
+  background: white;
+  color: red;
 }
+
 .ql-container{
   height: 114px;
 }
-.ql-formates{
-color: white;
+
+/* Responsive style */
+/* This will be for small screen sizes (mobile-first) */
+@media (max-width: 640px) {
+ .body{
+ height: 100%;
+ overflow: hidden;
+  width: 100%;
+  position: fixed;
+  
+ }
+ .header{
+ 
+ width: 100%;
+ overflow: hidden;
+ 
+ }
+
+ .img{
+  height: 40px;
+ }
+ .input-box{
+  width: 20rem;
+  padding-left: 35px;
+ }
+ .submit-btn{
+width: 20rem;
+ }
+ .icon{
+ position: absolute;
+margin-right: 21rem;
+ }
+ .model{
+  width: 90%;
+  margin: 15px;
+ }
+ .model-text{
+  font-size: 15px;
+ }
+ .title{
+  display: flex;
+  font-size:1.3rem;
+  width: 400px;
+  gap: 8px;
+  margin-left: 30px;
+ }
+ 
+ 
+ .form{
+  width: 90%;
+  overflow: hidden;
+ }
 }
+
+
+

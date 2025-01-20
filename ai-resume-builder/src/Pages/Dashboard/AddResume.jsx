@@ -32,9 +32,13 @@ const AddResume = () => {
   }
   return (
     <div>
-        <div className='p-14 py-24 border items-center flex justify-center backdrop-blur-lg bg-[#999]/50 
-         rounded-xl h-[280px] hover:scale-105 transition-all hover:shadow-md cursor-pointer border-dashed' onClick={()=>setopenDailog(true)}>
+     
+        <div className='p-14 py-24   border items-center flex justify-center backdrop-blur-lg bg-[#999]/50 
+         rounded-xl  h-[280px] hover:scale-105 transition-all hover:shadow-md cursor-pointer border-dashed' onClick={()=>setopenDailog(true)}>
             <PlusSquare/>
+           
+    
+       
         </div>
         <Dialog open={openDailog}  >
   

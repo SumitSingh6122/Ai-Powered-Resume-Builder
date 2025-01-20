@@ -5,6 +5,7 @@ import { ModernTemplate } from './Template/Template4';
 import {CreativeTemplate} from './Template/Template1';
 import { ExecutiveTemplate } from './Template/Template2';
 import { MinimalTemplate } from './Template/Template3';
+import ClassicProfessional from './Template/template5';
 
 
 
@@ -13,6 +14,7 @@ const templates = {
   2: CreativeTemplate,
   3: ExecutiveTemplate,
   4: MinimalTemplate,
+  5:ClassicProfessional,
 };
 
 export function PreviewModal({ isOpen, onClose, templateId }) {

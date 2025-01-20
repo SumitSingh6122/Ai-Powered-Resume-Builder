@@ -26,13 +26,13 @@ function Header() {
 
 
   return (
-    <header className='bg-gradient-to-tr from-[#1f242d] to-[#122143]'>
+    <header className='header  bg-gradient-to-tr from-[#1f242d] to-[#122143] '>
       <div className='p-3 px-5 content-center flex justify-between shadow-md logo'>
         <div className='flex justify-center content-center'>
-          <img src={logo} height={40} width={80} alt="logo" />
-          <h2 className='text-center heading mr-1'> <span>尺esume</span>  乃uilder</h2>
+          <img className='img' src={logo} height={40} width={80} alt="logo"  />
+          <h2 className='title text-center heading mr-1 '> <span className='sp-title'>尺esume</span>  乃uilder</h2>
         </div>
-        <div className="nav text-white pt-2 flex-col">
+        <div className="nav  text-white pt-2 flex-col">
           <a className='nav-link' href='/'>Home</a>
           <a className='nav-link' href='#features'>Feature</a>
           <a className='nav-link' href='#template'>Template</a>

@@ -91,14 +91,7 @@ export default function EducationDetail() {
                 />
               </div>
             </div>
-            <button
-              type="button"
-              
-              className="mt-4 px-4 py-2 bg-blue-500 rounded text-white hover:bg-blue-700 transition-colors flex items-center"
-            >
-              <Sparkles className="h-5 w-5 mr-2" />
-              AI Suggestion
-            </button>
+           
           </div>
         ))}
          

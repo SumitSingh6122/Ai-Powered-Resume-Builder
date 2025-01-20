@@ -4,8 +4,10 @@ import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { ResumeModel } from './3d model/resumemodel';
+import { useNavigate } from 'react-router-dom';
 
 export function Hero() {
+  const navigate=useNavigate();
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-gray-900 to-blue-900/20 pt-0 overflow-hidden">
    
@@ -14,8 +16,8 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-blue-900/20" />
       </div>
 
-      {/* 3D Model */}
-      <div className="absolute inset-0 z-0">
+     
+      <div className="model absolute inset-0 z-0">
         <Canvas>
           <PerspectiveCamera makeDefault position={[0, 0, 5]} />
           <ambientLight intensity={0.2} />
@@ -47,7 +49,7 @@ export function Hero() {
             </span>
           </div>
           
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-200 to-purple-400">
+          <h1 className="text-xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-200 to-purple-400">
             Create the Perfect Resume with
             <span className="block mt-2">AI Technology</span>
           </h1>
@@ -56,7 +58,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-8 text-xl text-blue-100/80 max-w-3xl mx-auto"
+            className="model-text mt-8 text-xl  text-blue-100/80 max-w-3xl mx-auto"
           >
             Build professional resumes in minutes with our AI-powered platform.
             Stand out from the crowd and land your dream job faster.
@@ -68,7 +70,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mt-12 flex flex-wrap justify-center gap-4"
           >
-            <button className=" group font-bold px-8 py-5 shadow-custom-lg bg-[#0ef] text-xl/3 text-[#323946] rounded-xl   transform hover:scale-105 transition-all flex items-center ">
+            <button onClick={()=>navigate('/auth/sign-in')} className=" group font-bold px-8 py-5 shadow-custom-lg bg-[#0ef] text-xl/3 text-[#323946] rounded-xl   transform hover:scale-105 transition-all flex items-center ">
               Build Your Resume
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>

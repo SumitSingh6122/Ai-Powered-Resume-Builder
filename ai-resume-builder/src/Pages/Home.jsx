@@ -12,7 +12,7 @@ import ClassicProfessional from './ResumetemplateSection/Template/template5';
 
 const Home = () => {
   return (
-    <div className='h-screen bg-[#323946]'>
+    <div className='home  h-screen bg-[#323946]'>
      <Hero/>
     
   <Templates/>

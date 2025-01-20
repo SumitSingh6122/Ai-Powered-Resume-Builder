@@ -41,6 +41,12 @@ const TemplateStore = ({isOpen,onClose}) => {
           name: 'Minimal Classic',
           description: 'Traditional layout with a modern minimal twist',
           preview: '/TemplateImage/template4.png'
+        },
+        {
+          id: '5',
+          name: 'Classical professional',
+          description: 'Traditional layout with a modern minimal twist',
+          preview: '/TemplateImage/template4.png'
         }
       ];
       
@@ -56,7 +62,7 @@ const TemplateStore = ({isOpen,onClose}) => {
   return (
     <AnimatePresence className='z-50' >
     { isOpen &&
-    <div onClick={onClose} className='bg-gray-800 h-[90vh] top-10 left-20 w-[90vw] z-50 fixed'>
+    <div onClick={onClose} className='bg-gray-800 h-[90vh] top-10 left-20 w-[90vw] z-50 fixed overflow-auto'>
  <div  className='h-full   m-5   '>
 
     <div className='flex items-center content-around relative'>  
