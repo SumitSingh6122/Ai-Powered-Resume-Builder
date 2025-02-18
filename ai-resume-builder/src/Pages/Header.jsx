@@ -16,14 +16,18 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ClearUser } from '@/redux/AuthSlice';
 import { toast } from 'react-toastify';
+import Cookies from 'js-cookie';
 
 
 
 
 function Header() {
-
+  const navigate=useNavigate();
   const { isAuthenticated } = useSelector((store) => store.auth);
-
+const handelGetStarted=()=>{
+  if(!isAuthenticated) return navigate('/auth/sign-in');
+  navigate('/dashboard');
+}
 
   return (
     <header className='header  bg-gradient-to-tr from-[#1f242d] to-[#122143] '>
@@ -47,9 +51,9 @@ function Header() {
             <AvatarMenu />
 
           }
-          <a href='/auth/sign-in'>
-            <button className='get'>Get started</button>
-          </a>
+          
+            <button onClick={handelGetStarted} className='get'>Get started</button>
+         
         </div>
       </div>
     </header>
@@ -76,6 +80,8 @@ export const AvatarMenu = () => {
     await axios.post("http://localhost:3000/api/v1/logout");
     dispatch(ClearUser());
     navigate('/');
+    localStorage.removeItem("token");
+    Cookies.remove('token');
 
     toast.success("user logout Succesfully")
   }

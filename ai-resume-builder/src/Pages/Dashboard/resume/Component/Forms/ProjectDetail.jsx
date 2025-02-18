@@ -1,6 +1,7 @@
 import React from 'react';
 import { Code, Plus, Trash2, Link } from 'lucide-react';
 import { useResumeStore } from '../../../../Store/useResumeStore';
+import { IoSend } from 'react-icons/io5';
 
 export default function ProjectsSection() {
   const { projects, addProject, updateProject, removeProject } = useResumeStore();
@@ -32,7 +33,7 @@ export default function ProjectsSection() {
                 </label>
                 <input
                   type="text"
-                  value={project.name}
+                  value={project.title}
                   onChange={(e) => updateProject(index, { ...project, name: e.target.value })}
                   className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
                   placeholder="Project Name"
@@ -60,8 +61,8 @@ export default function ProjectsSection() {
                   <Link className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="url"
-                    value={project.url}
-                    onChange={(e) => updateProject(index, { ...project, url: e.target.value })}
+                    value={project.link}
+                    onChange={(e) => updateProject(index, { link: e.target.value })}
                     className="w-full pl-10 pr-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
                     placeholder="https://github.com/username/project"
                   />
@@ -81,6 +82,21 @@ export default function ProjectsSection() {
                 />
               </div>
             </div>
+               
+                     <div className="mt-6">
+                              <h2 className="text-gray-400 font-semibold mb-2">Modify your Description with AI</h2>
+                              <div className="flex items-center bg-gray-700 p-2 rounded">
+                                <input
+                                  type="text"
+                                  
+                                  placeholder="Enter your prompt"
+                                  className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
+                                />
+                                <button type="button"  className="ml-2">
+                                  <IoSend className="text-white hover:text-gray-200 text-4xl" />
+                                </button>
+                              </div>
+                            </div>
           </div>
         ))}
       </div>

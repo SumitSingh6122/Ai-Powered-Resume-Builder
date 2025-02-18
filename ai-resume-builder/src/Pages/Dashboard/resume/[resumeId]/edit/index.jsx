@@ -8,16 +8,26 @@ import dummydata from '@/Pages/data/dummydata';
 import { motion } from 'framer-motion';
 import ResumeCreateHeader from '../../ResumeCreateHeader';
 import MessageToast from '@/components/ui/MessageToast';
+import { useSelector } from 'react-redux';
+import { useResumeStore } from '@/Pages/Store/useResumeStore';
+
 
 
 
 const EditResume = () => {
+  const {setResumeData}=useResumeStore();
   const [resumeInfo, setResumeInfo] = useState(null);
+  
   const params = useParams();
-  useEffect(() => {
-    setResumeInfo(dummydata);
+  const ResumeData = useSelector((store) => store.ResumeState.resume);
+ 
+ 
 
-  }, [])
+  useEffect(() => {
+    if (ResumeData) {
+      setResumeData(ResumeData);
+    }
+  }, [ResumeData, setResumeData]);
   return (
     <ResumeInfoContext.Provider value={{ resumeInfo, setResumeInfo }}>
       <div className='bg-gray-900 min-h-full text-black  overflow-x-hidden'>
@@ -30,7 +40,7 @@ const EditResume = () => {
           >
             <FormSection />
           </motion.div>
-          <ResumePreview />
+          <ResumePreview EditPage={true} />
           <MessageToast message='Help us craft a standout resume by providing the Job Description!' />
 
         </div></div>

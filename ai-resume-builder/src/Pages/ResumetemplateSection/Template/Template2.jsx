@@ -32,9 +32,11 @@ export function ExecutiveTemplate() {
             <MapPin className="h-4 w-4 mr-2" />
             {personalInfo.location}
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center" >
             <Link2 className="h-4 w-4 mr-2" />
-            {personalInfo.linkedin}
+            <a href={personalInfo.linkdin.link} target="_blank" rel="noopener noreferrer">
+                {personalInfo.linkdin.text}
+              </a>
           </div>
         </div>
       </header>
@@ -64,7 +66,7 @@ export function ExecutiveTemplate() {
                 </div>
                 <span className="text-gray-600">{job.startDate} - {job.endDate}</span>
               </div>
-              <ul className="mt-2 space-y-2 text-gray-700" dangerouslySetInnerHTML={{ __html: exp.description }}>
+              <ul className="mt-2 space-y-2 text-gray-700" dangerouslySetInnerHTML={{ __html: job.description }}>
              
               </ul>
             </div>

@@ -32,9 +32,11 @@ export  function MinimalTemplate() {
             <MapPin className="h-4 w-4 mr-2" />
             {personalInfo?.location || 'Boston, MA'}
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center"  >
             <Link2 className="h-4 w-4 mr-2" />
-            {personalInfo?.portfolio || 'portfolio.alexthompson.dev'}
+            <a href={personalInfo.portfolio.link} target="_blank" rel="noopener noreferrer">
+                {personalInfo.portfolio.text}
+              </a>
           </div>
         </div>
       </header>

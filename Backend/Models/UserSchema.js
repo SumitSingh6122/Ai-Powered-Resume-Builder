@@ -19,6 +19,11 @@ const UserSchema=mongoose.Schema({
      default: '',
   
       },
+      resumeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Resume", 
+      },
+     
       createdAt: {
         type: Date,
         default: Date.now,  

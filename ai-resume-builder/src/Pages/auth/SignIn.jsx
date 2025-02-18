@@ -1,9 +1,8 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { CiUser, CiLock } from "react-icons/ci";
 import { MdOutlineEmail } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
-import { FaArrowAltCircleRight, FaGithub } from "react-icons/fa";
-
+import { FaArrowAltCircleRight, FaCheckCircle, FaGithub } from "react-icons/fa";
 import { Button } from '@mui/material';
 import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -11,22 +10,29 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './form.css';
 import { useDispatch } from 'react-redux';
-import {  setUser } from '@/redux/AuthSlice';
+import { setUser } from '@/redux/AuthSlice';
 import { toast } from 'react-toastify';
-import { Loader } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, Loader } from 'lucide-react';
+
 
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
   const [username, setName] = useState('');
+  const [isPassFocus,setPassFocus]=useState(false);
   const [password, setPassword] = useState('');
+  const [passVisible, setPassVisible] = useState(false);
+  const [passwordValidations, setPasswordValidations] = useState({
+    minLength: false,
+    specialChar: false,
+    numberAndLetter: false,
+  });
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
   const handleSignInToggle = () => setIsSignIn(!isSignIn);
 
-  
   const handleOAuthLogin = async (providerType) => {
     setLoading(true);
     try {
@@ -38,8 +44,7 @@ const SignIn = () => {
         email: user.email,
         avatar: user.photoURL,
       };
- console.log(formData);
-      
+
       await handleOAuthSubmit(providerType, formData);
     } catch (error) {
       toast.error(`${providerType.charAt(0).toUpperCase() + providerType.slice(1)} Sign In Failed`);
@@ -48,14 +53,12 @@ const SignIn = () => {
     }
   };
 
-  
   const handleOAuthSubmit = async (providerType, formData) => {
     try {
       const endpoint = providerType === 'google' ? 'google-login' : 'github-login';
-      console.log(providerType);
-      const res=await axios.post(`http://localhost:3000/api/v1/${endpoint}`, formData);
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/${endpoint}`, formData,{ withCredentials: true });
       const { user, token } = res.data;
-      dispatch(setUser({user,token, isAuthenticated: true }));
+      dispatch(setUser({ user, token, isAuthenticated: true }));
       toast.success('Login Successful!');
       navigate('/dashboard');
     } catch (error) {
@@ -63,17 +66,17 @@ const SignIn = () => {
     }
   };
 
-  
   const onSubmitHandler = async () => {
     setLoading(true);
     try {
       const formData = isSignIn
-        ? { email, password } 
-        : { username, email, password }; 
-  
+        ? { email, password }
+        : { username, email, password };
+
       const endpoint = isSignIn ? '/login' : '/register';
-      const res = await axios.post(`http://localhost:3000/api/v1${endpoint}`, formData);
-  
+
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1${endpoint}`, formData,{ withCredentials: true });
+
       if (isSignIn) {
         const { user, token } = res.data;
         dispatch(setUser({ user, token, isAuthenticated: true }));
@@ -84,13 +87,42 @@ const SignIn = () => {
         setIsSignIn(true);
       }
     } catch (error) {
-      console.error('Error during authentication:', error.response?.data.message);
       toast.error(error.response?.data?.message || 'Something went wrong!');
     } finally {
       setLoading(false);
     }
   };
+
   
+  const validatePassword = (password) => {
+    const updatedValidations = {
+      minLength: password.length >= 8,
+    };
+    setPasswordValidations(updatedValidations);
+
+    
+      setPasswordValidations((prev) => ({
+        ...prev,
+        specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      }));
+   
+
+   
+      setPasswordValidations((prev) => ({
+        ...prev,
+        numberAndLetter: /(?=.*[0-9])(?=.*[a-zA-Z])/.test(password),
+      }));
+
+  };
+
+  const handlePasswordChange = (e) => {
+    const inputPassword = e.target.value;
+    setPassword(inputPassword);
+    validatePassword(inputPassword);
+  };
+
+ 
+  const isPasswordValid = Object.values(passwordValidations).every(Boolean);
 
   return (
     <div className="body bg-gradient-to-tr from-[#1f242d] to-[#10244b]">
@@ -108,28 +140,49 @@ const SignIn = () => {
             )}
             <div className="input-box">
               <MdOutlineEmail className="icon" />
-              <input type="text" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
+              <input type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} required />
             </div>
-            <div className="input-box">
-              <CiLock className="icon" />
-              <input type="password" placeholder="Password..." onChange={(e) => setPassword(e.target.value)} />
+            <div className='flex-col'>
+              <div className="input-box">
+                <CiLock className="icon" />
+                <input onFocus={()=>setPassFocus(true)}  type={passVisible ? "text" : "password"} placeholder="Password..." onChange={handlePasswordChange} />
+                {passVisible ? (
+                  <EyeIcon onClick={() => setPassVisible(false)}  className={`icon mr-2 ${isPassFocus?'opacity-100':'opacity-0'}`} />
+                ) : (
+                  <EyeOffIcon onClick={() => setPassVisible(true)} className={`icon mr-2 ${isPassFocus?'opacity-100':'opacity-0'}`} />
+                )}
+              </div>
+              { password.length>0 &&   <div className="relative mt-2 flex text-gray-500 text-[12px]">
+                <ul>
+                  {[
+                    { text: "Password must contain 8 letters", key: "minLength" },
+                    { text: "Password must contain 1 special character", key: "specialChar" },
+                    { text: "Password must contain numbers and letters", key: "numberAndLetter" },
+                  ].map(({ text, key }) => (
+                    <li key={key} className='flex'>
+                      <FaCheckCircle className={passwordValidations[key] ? "text-green-500 mr-1 mt-1 text-[10px]" : "text-red-500 mr-1 mt-1 text-[10px]"} />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
+              </div> }
+             
+
             </div>
             <Button
               variant="contained"
               className="submit-btn"
               onClick={onSubmitHandler}
               disableElevation
+             
             >
               {loading ? <Loader className="animate-spin text-xl" /> : <>Continue <FaArrowAltCircleRight className="ml-3" /></>}
             </Button>
-            <p className="mt-2">
-              {isSignIn
-                ? "Don't have an account? "
-                : "Already have an account? "}
+            <p className="mt-2 ">
+              {isSignIn ? "Don't have an account? " : "Already have an account? "}
               <span onClick={handleSignInToggle}>{isSignIn ? "Sign Up" : "Sign In"}</span>
             </p>
           </div>
-
           <p className="or text-center">Or</p>
           <div className="social-auth">
             <div className="media">

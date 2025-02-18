@@ -6,6 +6,10 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { AichatSession } from "@/Pages/Service/geminiapi";
 import { FaSpinner } from "react-icons/fa";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { IoSend } from "react-icons/io5";
+
 
 
 const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFullYear()) => {
@@ -19,32 +23,32 @@ const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFull
       options.push({ value: `${month} ${year}`, label: `${month} ${year}` });
     }
   }
-  options.push({ value: "Present", label: "Present" }); // Add "Present" option
+  options.push({ value: "Present", label: "Present" });
   return options;
 };
 
 export default function Experience() {
   const { experience, addExperience, updateExperience, removeExperience } = useResumeStore();
-  const [content, setcontent] = useState();
-  const [loading, setloading] = useState(false);
-  const [aiWorkDescription, setaiWoekDescription] = useState([]);
+  const [content, setcontent] = useState({});
   const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
 
   const handleChange = (index, value) => {
+    setcontent((prev) => ({ ...prev, [index]: value }));
     const updatedExperience = [...experience];
     updatedExperience[index] = { ...updatedExperience[index], description: value };
     updateExperience(index, updatedExperience[index]);
-    setcontent(value);
+  
   };
   
   const appendDescriptionToQuill = (index, description) => {
     const currentContent = experience[index]?.description || ""; // Get current editor content
-    const newContent = `${currentContent}<ul><li>${description}</li></ul>`; // Append the new description
+    
+    const newContent = `${currentContent}<ul><li>${description}</li></ul>`; 
     handleChange(index, newContent); // Update the state and editor content
   }; 
   
   const GenerateWorkSummary = async (position, index) => {
-    // Set loading state for the current experience
+   
     const updatedExperience = [...experience];
     updatedExperience[index] = { ...updatedExperience[index], isLoading: true };
     updateExperience(index, updatedExperience[index]);
@@ -59,7 +63,7 @@ export default function Experience() {
       if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
         const parsedData = JSON.parse(cleanData);
 
-        // Update the specific experience with AI-generated descriptions
+       
         updatedExperience[index] = {
           ...updatedExperience[index],
           aiDescriptions: parsedData,
@@ -193,8 +197,8 @@ export default function Experience() {
                   <button
                     type="button"
                     onClick={() => GenerateWorkSummary(exp.position, index)}
-                    disabled={exp.isLoading} // Disable button when loading
-                    className={`mb-2 px-3 py-2 rounded text-white flex items-center ${exp.isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-700"
+                    disabled={exp.isLoading} 
+                    className={`mb-2 px-3 py-2 rounded text-white flex items-center ${exp.isLoading ? "bg-blue-500  cursor-not-allowed" : "bg-blue-500 hover:bg-blue-700"
                       }`}
                   >
                     {exp.isLoading ? (
@@ -211,16 +215,24 @@ export default function Experience() {
                 </div>
 
                 <ReactQuill
-                  value={content}
+                  value={content[index]}
 
                   onChange={(value) => handleChange(index, value)}
                   theme="snow"
                   className="h-40 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
                 />
+        
+                
+
               </div>
             </div>
-
-            {exp.aiDescriptions?.map((Des, descIndex) => (
+           { exp.isLoading ? (
+              <SkeletonTheme baseColor="#b3b1b1" highlightColor="#444">
+                         <p>
+                           <Skeleton count={4} />
+                         </p>
+                       </SkeletonTheme>
+           ): (  exp.aiDescriptions?.map((Des, descIndex) => (
               <div
                 className="bg-gray-600 relative mt-1 rounded h-14 p-2 flex"
                 key={`${Des}-${descIndex}`}
@@ -234,8 +246,22 @@ export default function Experience() {
                   <Plus />
                 </button>
               </div>
-            ))}
-
+            )) )   }
+           
+         <div className="mt-6">
+                  <h2 className="text-gray-400 font-semibold mb-2">Modify your Description with AI</h2>
+                  <div className="flex items-center bg-gray-700 p-2 rounded">
+                    <input
+                      type="text"
+                      
+                      placeholder="Enter your prompt"
+                      className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
+                    />
+                    <button type="button"  className="ml-2">
+                      <IoSend className="text-white hover:text-gray-200 text-4xl" />
+                    </button>
+                  </div>
+                </div>
           </div>
         ))}
       </div>

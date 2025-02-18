@@ -5,9 +5,15 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { ResumeModel } from './3d model/resumemodel';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export function Hero() {
+  const isAuthenticated=useSelector((state)=>state.auth.isAuthenticated);
   const navigate=useNavigate();
+  const handelBuildResume=()=>{
+    if(!isAuthenticated) return navigate('/auth/sign-in');
+    navigate('/dashboard');
+  }
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-gray-900 to-blue-900/20 pt-0 overflow-hidden">
    
@@ -70,7 +76,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mt-12 flex flex-wrap justify-center gap-4"
           >
-            <button onClick={()=>navigate('/auth/sign-in')} className=" group font-bold px-8 py-5 shadow-custom-lg bg-[#0ef] text-xl/3 text-[#323946] rounded-xl   transform hover:scale-105 transition-all flex items-center ">
+            <button onClick={handelBuildResume} className=" group font-bold px-8 py-5 shadow-custom-lg bg-[#0ef] text-xl/3 text-[#323946] rounded-xl   transform hover:scale-105 transition-all flex items-center ">
               Build Your Resume
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>

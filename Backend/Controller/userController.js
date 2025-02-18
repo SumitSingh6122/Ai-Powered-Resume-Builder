@@ -2,7 +2,7 @@ import { User } from "../Models/UserSchema.js";
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// User Registration
+
 export const UserRegister = async (req, res) => {
     const { username,  email, password } = req.body;
 
@@ -87,7 +87,9 @@ export const LoginUser = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
         });
 
         return res.status(200).json({
@@ -108,7 +110,13 @@ export const LoginUser = async (req, res) => {
 
 // User Logout
 export const Logout = (req, res) => {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite:"lax",     
+        secure: process.env.NODE_ENV === "production", 
+          path: "/"
+              
+    });
     return res.status(204).json({
         message: "Logged out successfully",
         success: true
@@ -147,9 +155,11 @@ export const googleLogin = async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        res.cookie('token', token, {
+        res.cookie('token', token, { 
             httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000, 
+  maxAge: 24 * 60 * 60 * 1000,
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
         });
 
         return res.status(200).json({
@@ -168,7 +178,26 @@ export const googleLogin = async (req, res) => {
     }
 };
 
+export const AuthenticateUser=async (req, res) => {
+    const token = req.cookies.token; 
 
+    if (!token) {
+      return res.status(401).json({ message: "Authentication token missing" });
+    }
+  
+
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+        if (err) return res.status(403).json({ message: "Invalid token" });
+
+        const user = await User.findById(decoded.id).select("-password");
+        return res.status(200).json({
+            message: 'User is Verified',
+            token,
+            user,
+            success: true
+        });
+    });
+};
 export const githubLogin = async (req, res) => {
     const { name, email, avatar } = req.body;
 
@@ -201,7 +230,9 @@ export const githubLogin = async (req, res) => {
 
         res.cookie('token', token, {
             httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000, 
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
         });
 
         return res.status(200).json({

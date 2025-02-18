@@ -37,11 +37,11 @@ export function ModernTemplate() {
               {personalInfo.location}
             </div>
           )}
-          {personalInfo.website && (
+          {personalInfo.portfolio && (
             <div className="flex items-center">
               <Globe className="h-4 w-4 mr-2 text-blue-600" />
-              <a href={personalInfo.website} target="_blank" rel="noopener noreferrer">
-                {personalInfo.website}
+              <a href={personalInfo.portfolio.link} target="_blank" rel="noopener noreferrer">
+                {personalInfo.portfolio.text}
               </a>
             </div>
           )}
@@ -72,7 +72,7 @@ export function ModernTemplate() {
                   </div>
                   <span className="text-gray-600 text-sm">{`${job.startDate || ''} - ${job.endDate || ''}`}</span>
                 </div>
-                <p className="mt-2 text-gray-700" dangerouslySetInnerHTML={{ __html: job.description }}></p>
+                <div className="mt-2 text-gray-700" dangerouslySetInnerHTML={{ __html: job.description }}></div>
            
               </div>
             ))

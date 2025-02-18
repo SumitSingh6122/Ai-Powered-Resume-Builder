@@ -5,15 +5,22 @@ export const useResumeStore = create((set) => {
   const addDummyData = () => ({
     personalInfo: {
       name: 'John Doe',
+      profileImageUrl:'',
       email: 'johndoe@example.com',
       phone: '123-456-7890',
       location: 'San Francisco, CA',
-      link: 'linkedin.com/in/john-doe',
-      website: 'https://johndoe.com', 
-      GithubUrl:'www.github.com/sumit-singh',
+      linkedin: { text:'linkedin.com/in/john-doe',
+               link:'linkedin.com/in/john-doe'      
+               },
+      portfolio:{ text:'https://johndoe.com',
+        link:'https://johndoe.com'      
+        },
+      GithubUrl:{ text:'www.github.com/sumit-singh',
+        link:'www.github.com/sumit-singh'      
+        },
     
     },
-  
+    Resumetitle:'Full stack',
     position:'Full stack developer',
     level:"fresher",
     ResumeTemplateId:'1',
@@ -22,7 +29,7 @@ export const useResumeStore = create((set) => {
     experience: [
       {
         company: 'TechCorp',
-        position: 'Software Engineer',
+        position: 'Software Engineer',   
         startDate: 'Jan 2021',
         endDate: 'Present',
         description:
@@ -64,12 +71,12 @@ export const useResumeStore = create((set) => {
       {
         name: 'Certified JavaScript Developer',
         description: 'TechCertify',
-        date: 'March 2023',
+        date: 'Mar 2023',
       },
       {
         name: 'AWS Certified Solutions Architect',
        description: 'Amazon Web Services',
-        date: 'June 2022',
+        date: 'Jun 2022',
       },
     ],
     skills: {
@@ -92,18 +99,22 @@ export const useResumeStore = create((set) => {
 
     
     addDummyData: () => set(addDummyData),
+    setResumeData: (newResumeData) => set(() => newResumeData),
 
    
     updatePersonalInfo: (info) =>
       set((state) => ({
         personalInfo: { ...state.personalInfo, ...info },
       })),
+      
    updateResumeTemplateID:(ResumeTemplateId)=>set({ResumeTemplateId}),
    updateLevel: (level) => set({ level }),
     updateSummary: (summary) => set({ summary }),
    
 
     updatePosition:(position)=>set({position}),
+    updateTitle: (Resumetitle) => set({Resumetitle}),
+
     addExperience: () =>
       set((state) => ({
         experience: [
@@ -208,11 +219,12 @@ export const useResumeStore = create((set) => {
           email: '',
           phone: '',
           location: '',
-          website: '',
-          GithubUrl:'',
-          link:'',
+          linkedin: { text: '', link: '' },
+      portfolio: { text: '', link: '' },
+      GithubUrl: { text: '', link: '' },
         },
         summary: '',
+        Resumetitle:'',
         experience: [],
         education: [],
         projects: [],

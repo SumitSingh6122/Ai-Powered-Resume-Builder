@@ -1,25 +1,28 @@
 import React, { useState } from "react";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; 
+import "react-quill/dist/quill.snow.css";
 
-const RichTextEditor = ({value}) => {
-  const [content, setContent] = useState({value});
-
-  const handleChange = (value) => {
-    setContent(value);
-  };
+export default function QuillTest() {
+  const [content, setContent] = useState("");
 
   return (
-
+    <div>
       <ReactQuill
         value={content}
-        onChange={handleChange}
+        onChange={setContent}
         theme="snow"
-        className="h-32 bg-gray-700/50 border border-gray-600 rounded text-xl focus:ring-2 focus:ring-blue-500 text-white"
-       
+        modules={{
+          toolbar: [
+            ["bold", "italic", "underline"],
+            [{ list: "ordered" }, { list: "bullet" }],
+          ],
+        }}
+        formats={["bold", "italic", "underline", "list", "bullet"]}
       />
-   
+      <h3>Quill Output:</h3>
+      <div style={{ background: "#f3f4f6", padding: "10px", borderRadius: "5px" }}>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+      </div>
+    </div>
   );
-};
-
-export default RichTextEditor;
+}

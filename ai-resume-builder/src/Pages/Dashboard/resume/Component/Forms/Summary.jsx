@@ -9,38 +9,66 @@ import 'react-loading-skeleton/dist/skeleton.css';
 const Summary = () => {
   const [prompt, setPrompt] = useState('');
   const [Aisummary, setAisummary] = useState([]);
-  const { position, level, updateLevel, updatePosition,jobDescription, summary, updateSummary } = useResumeStore();
+  const[AipromptVisible,setAipromptVisible]=useState(false);
+  const { position, level, updateLevel, updatePosition, jobDescription, summary, updateSummary } = useResumeStore();
   const [isPositionFocused, setIsPositionFocused] = useState(false);
+  
   const [isExperienceFocused, setIsExperienceFocused] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Helper function to extract a JSON array from a string
+  const extractJsonArray = (text) => {
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+    if (start !== -1 && end !== -1 && end > start) {
+      return text.slice(start, end + 1);
+    }
+    throw new Error('No valid JSON array found in the response.');
+  };
 
   const GenerateSummary = async () => {
     setLoading(true);
     try {
       const Aiprompt = `
-      Generate a JSON array containing 4 different ATS-friendly summaries for the given job title and experience level, and consider job description for better output.
-      Each entry should include a 3-4 line description highlighting key responsibilities, skills, and expertise, tailored for ATS optimization.
+        Generate a JSON array containing 4 different ATS-friendly summaries for the given job title and experience level, and consider job description for better output if it was availbale if it not than based on reast data generate ats friendly summary.
+        Each entry should include a 3-4 line description highlighting key responsibilities, skills, and expertise, tailored for ATS optimization.
 
-      Structure:
-      [
-        { "summary": "<summary>" },
-        { "summary": "<summary>" },
-        { "summary": "<summary>" },
-        { "summary": "<summary>" }
-      ]
+        Structure:
+        [
+          { "summary": "<summary>" },
+          { "summary": "<summary>" },
+          { "summary": "<summary>" },
+          { "summary": "<summary>" }
+        ]
 
-      Job Title: ${position}
-      Experience Level: ${level}
-      job Description:${jobDescription}
+        Job Title: ${position}
+        Experience Level: ${level}
+        Job Description: ${jobDescription}
       `;
 
       const result = await AichatSession.sendMessage(Aiprompt);
       const data = await result.response.text();
 
+      console.log(data);
       const cleanData = data.replace(/```json|```/g, '').trim();
-      const parsedData = JSON.parse(cleanData);
 
-      setAisummary(parsedData);
+      
+      let parsedData;
+      try {
+        parsedData = JSON.parse(cleanData);
+      } catch (jsonError) {
+       
+        console.warn('Direct JSON.parse failed. Attempting to extract JSON array from the response.');
+        const extracted = extractJsonArray(cleanData);
+        parsedData = JSON.parse(extracted);
+      }
+
+      if (!Array.isArray(parsedData)) {
+        console.error('Parsed data is not an array:', parsedData);
+        setAisummary([]);
+      } else {
+        setAisummary(parsedData);
+      }
     } catch (error) {
       console.error('Error generating summary:', error);
     } finally {
@@ -49,6 +77,7 @@ const Summary = () => {
   };
 
   const AiPrompt = async () => {
+  
     const PromptwithAi = `${prompt} Modify the previous result and return output in the same JSON format: ${JSON.stringify(Aisummary)}`;
     setPrompt('');
 
@@ -58,13 +87,27 @@ const Summary = () => {
       const data = await result.response.text();
 
       const cleanData = data.replace(/```json|```/g, '').trim();
-      const parsedData = JSON.parse(cleanData);
 
-      setAisummary(parsedData);
+      let parsedData;
+      try {
+        parsedData = JSON.parse(cleanData);
+      } catch (jsonError) {
+        console.warn('Direct JSON.parse failed for AiPrompt. Attempting to extract JSON array from the response.');
+        const extracted = extractJsonArray(cleanData);
+        parsedData = JSON.parse(extracted);
+      }
+
+      if (!Array.isArray(parsedData)) {
+        console.error('Parsed data is not an array:', parsedData);
+        setAisummary([]);
+      } else {
+        setAisummary(parsedData);
+      }
     } catch (error) {
       console.error('Error sending prompt:', error);
     } finally {
       setLoading(false);
+      setAipromptVisible(true);
     }
   };
 
@@ -125,12 +168,14 @@ const Summary = () => {
         </button>
 
         {loading ? (
-           <SkeletonTheme baseColor="#b3b1b1" highlightColor="#444">
-           <p>
-             <Skeleton count={4} />
-           </p>
-         </SkeletonTheme>
+          <SkeletonTheme baseColor="#b3b1b1" highlightColor="#444">
+            <p>
+              <Skeleton count={4} />
+            </p>
+          </SkeletonTheme>
         ) : (
+         
+          Array.isArray(Aisummary) &&
           Aisummary.length > 0 &&
           Aisummary.map((item, index) => (
             <div className="bg-gray-600 mt-2 rounded p-3 relative" key={index}>
@@ -145,22 +190,25 @@ const Summary = () => {
             </div>
           ))
         )}
+   {AipromptVisible &&
+   <div className="mt-6">
+   <h2 className="text-gray-400 font-semibold mb-2">Modify your summary with AI</h2>
+   <div className="flex items-center bg-gray-700 p-2 rounded">
+     <input
+       type="text"
+       value={prompt}
+       onChange={(e) => setPrompt(e.target.value)}
+       placeholder="Enter your prompt"
+       className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
+     />
+     <button type="button" onClick={AiPrompt} className="ml-2">
+       <IoSend className="text-white hover:text-gray-200 text-4xl" />
+     </button>
+   </div>
+ </div>
+ }
+        
 
-        <div className="mt-6">
-          <h2 className="text-gray-400 font-semibold mb-2">Modify your summary with AI</h2>
-          <div className="flex items-center bg-gray-700 p-2 rounded">
-            <input
-              type="text"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Enter your prompt"
-              className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
-            />
-            <button type="button" onClick={AiPrompt} className="ml-2">
-              <IoSend className="text-white hover:text-gray-200 text-4xl" />
-            </button>
-          </div>
-        </div>
       </div>
     </form>
   );

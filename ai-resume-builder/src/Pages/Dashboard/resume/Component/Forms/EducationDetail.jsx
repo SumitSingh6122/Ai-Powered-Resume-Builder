@@ -1,10 +1,64 @@
 import React from 'react';
 import { GraduationCap, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useResumeStore } from '../../../../Store/useResumeStore';
-
+import Select from "react-select";
 export default function EducationDetail() {
   const { education, addEducation, updateEducation, removeEducation } = useResumeStore();
-
+  
+  const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFullYear()) => {
+    const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+    const options = [];
+    for (let year = startYear; year <= endYear; year++) {
+      for (let month of months) {
+        options.push({ value: `${month} ${year}`, label: `${month} ${year}` });
+      }
+    }
+    options.push({ value: "Present", label: "Present" });
+    return options;
+  };
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      backgroundColor: "#374151",
+      borderColor: "#4B5563",
+      borderRadius: "0.5rem",
+      padding: "0.25rem",
+      color: "white",
+      ":hover": {
+        borderColor: "#3B82F6",
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      backgroundColor: "#1F2937",
+      borderRadius: "0.5rem",
+      color: "#D1D5DB",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? "#3B82F6" : "#1F2937",
+      color: state.isFocused ? "#FFFFFF" : "#D1D5DB",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#FFFFFF",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#9CA3AF",
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: "#9CA3AF",
+      ":hover": {
+        color: "#3B82F6",
+      },
+    }),
+  };
+  const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
   return (
     <div className="bg-gray-800/50 rounded-xl p-6">
       <h2 className="text-xl font-semibold text-white flex items-center mb-4">
@@ -69,12 +123,15 @@ export default function EducationDetail() {
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Graduation Date
                 </label>
-                <input
-                  type="month"
-                  value={edu.graduationDate}
-                  onChange={(e) => updateEducation(index, { ...edu, graduationDate: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+                <Select
+                  options={monthYearOptions}
+                  
+                  value={monthYearOptions.find((date)=>date.value== edu?.graduationDate) }
+                  onChange={(e) => updateEducation(index, { ...edu, graduationDate:e.value })}
+                  styles={customStyles}
+                  placeholder="Start Date"
                 />
+            
               </div>
 
               <div className="md:col-span-2">

@@ -1,6 +1,7 @@
 import express from 'express';
-import { githubLogin, googleLogin, LoginUser, Logout, UserRegister } from '../Controller/userController.js';
+import { AuthenticateUser, githubLogin, googleLogin, LoginUser, Logout, UserRegister } from '../Controller/userController.js';
 const router=express.Router();
+router.get('/verify',AuthenticateUser);
 router.post('/register',UserRegister);
 router.post('/login',LoginUser);
 router.post('/logout',Logout);

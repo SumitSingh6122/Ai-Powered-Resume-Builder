@@ -17,7 +17,7 @@ const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFull
   
   return options;
 };
-
+const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
 export function AchievementsSection() {
   const { certifications, addCertification, updateCertification, removeCertification } = useResumeStore();
 
@@ -108,11 +108,11 @@ export function AchievementsSection() {
           <label className="block text-sm font-medium text-gray-300 mb-1">Date</label>
           <Select
            
-            value={cert.date}
-            onChange={(e) => updateCertification(index, { ...cert, date: e.target.value })}
+            value={monthYearOptions.find((option)=>option.value===cert.date)}
+            onChange={(e) => updateCertification(index, { ...cert, date: e.value })}
             styles={customStyles}
             placeholder="compilation Date"
-            options={generateMonthYearOptions()}
+            options={monthYearOptions}
           />
         </div>
       </div>

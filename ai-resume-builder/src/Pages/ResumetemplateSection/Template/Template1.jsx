@@ -33,7 +33,7 @@ export function CreativeTemplate() {
           <div className="w-32 h-32 rounded-full bg-white/10 mx-auto mb-6 overflow-hidden">
             <img
               src={
-                personalInfo?.photo ||
+                personalInfo?.profileImageUrl ||
                 "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=128&h=128"
               }
               alt="Profile"
@@ -42,10 +42,10 @@ export function CreativeTemplate() {
           </div>
           {/* Name and Title */}
           <h1 className="text-2xl font-bold text-center mb-1">
-            {personalInfo.name || "Emma Wilson"}
+            {personalInfo.name }
           </h1>
           <h2 className="text-lg text-blue-200 text-center mb-6">
-            {personalInfo.title || "Creative Director"}
+            {personalInfo.title }
           </h2>
           {/* Contact */}
           <div className="space-y-3 text-sm">
@@ -67,10 +67,12 @@ export function CreativeTemplate() {
                 {personalInfo.location}
               </div>
             )}
-            {personalInfo.website && (
-              <div className="flex items-center">
+            {personalInfo.portfolio && (
+              <div className="flex items-center"  >
                 <Globe className="h-4 w-4 mr-3" />
-                {personalInfo.website}
+                <a href={personalInfo.portfolio.link} target="_blank" rel="noopener noreferrer">
+                {personalInfo.portfolio.text}
+              </a>
               </div>
             )}
           </div>
@@ -81,12 +83,13 @@ export function CreativeTemplate() {
               Design Skills
             </h3>
             <div className="space-y-3">
-              {skills.design.map((item, index) => (
-                <div className="flex justify-between text-sm mb-1">
+
+              { Array.isArray(skills)? (skills.design.map((item, index) => (
+                <div  className="flex justify-between text-sm mb-1">
                   {item}
                 </div>
                
-              ))}
+              ))):<span>Add design Skills</span>}
             </div>
           </div>
           {/* Technical Skills */}
@@ -117,8 +120,7 @@ export function CreativeTemplate() {
             Profile
           </h3>
           <p className="text-gray-700 leading-relaxed">
-            {summary ||
-              "Creative Director with 8+ years of experience in digital design and brand strategy. Passionate about creating memorable brand experiences and leading creative teams to deliver innovative solutions that drive business growth."}
+            {summary}
           </p>
         </section>
         {/* Experience */}
@@ -140,6 +142,7 @@ export function CreativeTemplate() {
                   </span>
                 </div>
                 <p
+                 
   dangerouslySetInnerHTML={{ __html: exp.description }}
   className="mt-2 text-gray-700"
 />

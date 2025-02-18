@@ -3,19 +3,22 @@ import Resume from "../Models/ResumeSchema.js";
 // Create a new resume
 export const createResume = async (req, res) => {
     try {
+      
       const { resumeData } = req.body;
+      console.log("Received request body:", req.body);
+
   
       if (!resumeData) {
         return res.status(400).json({ message: "Resume data is required" });
       }
   
-      // Ensure userId is included
+      
       if (!req.id) {
         return res.status(400).json({ message: "User ID is required for this operation" });
       }
   
       const newResume = new Resume({
-        userId: req.id, // Add userId from middleware
+        userId: req.id, 
         resumeData,
       });
   

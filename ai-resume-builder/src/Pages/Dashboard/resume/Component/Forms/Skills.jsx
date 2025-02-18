@@ -7,7 +7,8 @@ export function SkillsSection() {
   const [newSkill, setNewSkill] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('technical');
 
-  const handleAddSkill = () => {
+  const handleAddSkill = (e) => {
+    e.preventDefault();
     if (newSkill.trim()) {
       addSkill(selectedCategory, newSkill.trim());
       setNewSkill('');
@@ -71,11 +72,12 @@ export function SkillsSection() {
                 type="text"
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddSkill(e)}
                 className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
                 placeholder="Add a new skill"
               />
               <button
+              type='button'
                 onClick={handleAddSkill}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-400 hover:text-blue-300"
               >

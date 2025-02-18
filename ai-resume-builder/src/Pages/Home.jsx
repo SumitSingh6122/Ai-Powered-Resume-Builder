@@ -5,7 +5,7 @@ import Footer from './footer';
 import { Hero } from './hero';
 import { Features } from './feature';
 import { Templates } from './Templates';
-import ClassicProfessional from './ResumetemplateSection/Template/template5';
+
 
 
 

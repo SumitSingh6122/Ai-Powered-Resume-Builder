@@ -27,7 +27,50 @@ export default function ResumeCreateHeader() {
   } = useResumeStore();
 
 
-
+  const HandleResumeEnhancement = async () => {
+    let prompt = `
+      Analyze the following resume and provide suggestions for enhancing it to improve alignment with the role "${position}" at a "${level}" level in software development. Focus on improving keyword usage, highlighting relevant skills, and optimizing the overall content for better ATS alignment. Provide the following:
+      
+      1. An overall suggestion to improve the resume's ATS compatibility.
+      2. A list of key areas where the resume could be enhanced.
+      3. Specific keyword suggestions that should be included or emphasized.
+      
+      Here are the details:
+      - **Job Description**: ${jobDescription}
+      - **Position**: ${position}
+      - **Level**: ${level}
+      - **Summary**: ${summary}
+      - **Skills**: ${JSON.stringify(skills)}
+      - **Education**: ${JSON.stringify(education)}
+      - **Projects**: ${JSON.stringify(projects)}
+  
+      Additional Information:
+      ${experience?.length > 0 ? `- **Experience**: ${JSON.stringify(experience)}` : ''}
+      ${certifications?.length > 0 ? `- **Certifications**: ${JSON.stringify(certifications)}` : ''}
+  
+      **Output Format**:
+      {
+        "suggestion": "<overall suggestion to improve ATS alignment>", 
+        "areasToEnhance": [
+          "<area1>", 
+          "<area2>", 
+          ...
+        ],
+        "keywordSuggestions": [
+        "<keyword1>", 
+        "<keyword2>", 
+        ...
+      ]
+      }
+    `;
+ console.log("process")
+    const result = await AichatSession.sendMessage(prompt);
+      const rawData = await result.response.text();
+      console.log(rawData);
+  
+   
+  };
+  
     
    
   const HandelAtsScore = async () => {
@@ -131,7 +174,7 @@ export default function ResumeCreateHeader() {
       case 'ai-enhancement':
         return (
           <div className="space-y-4">
-            <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
+            <button onClick={HandleResumeEnhancement} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
               Enhance with AI
             </button>
             <p className="text-gray-300">
@@ -201,7 +244,7 @@ export default function ResumeCreateHeader() {
                   setActiveTab(tab);
                   setIsBoxOpen(true);
                 }}
-                className={`px-4 py-2 rounded-lg transition-all ${
+                className={`px-4 py-2 rounded transition-all ${
                   activeTab === tab 
                     ? 'bg-blue-600 text-white rounded'
                     : 'text-gray-300 hover:bg-gray-700'

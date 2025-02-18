@@ -5,6 +5,7 @@ import AuthRoutes from './Routes/Route.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import Resumerouter from './Routes/ResumeRoute.js';
+import bodyParser from 'body-parser';
 
 
 
@@ -14,12 +15,19 @@ const app=express();
 const port=3000;
 DBConnection();
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));  
 app.use(cookieParser());
-app.use(cors());
+app.use(
+    cors({
+      origin: "https://nextgenresume.vercel.app", 
+      credentials: true, 
+    })
+  );
 
 app.use("/api/v1",AuthRoutes);
 app.use("/api/v1/resume", Resumerouter);
 
 app.listen(port,()=>{
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at https://nextgenresume.vercel.app:${port}`);
 })
