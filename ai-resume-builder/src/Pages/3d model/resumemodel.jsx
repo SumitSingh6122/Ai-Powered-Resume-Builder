@@ -11,17 +11,15 @@ export function ResumeModel() {
   video.src = videosrc;
   video.load();
   video.play();
-  video.loop = true; // optional, can wait for video to be loaded
+  video.loop = true; 
   const videoTexture = new THREE.VideoTexture(video);
-  // Load video texture
 
-  // Animation loop for rotating and pulsing the resume
   useFrame((state) => {
     if (groupRef.current && meshRef.current) {
       groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
       groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
 
-      // Pulse effect
+  
       const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.02;
       meshRef.current.scale.set(scale, scale, scale);
     }

@@ -10,11 +10,13 @@ import { MdDelete } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { PreviewModal } from '../ResumetemplateSection/TemplatePreview'
 
 const RecentResumeCard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const allResume = useSelector((state) => state?.ResumeState?.allResume);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const handelEditResume = (Item) => {
     dispatch(setResume({ resume: Item.resumeData }));
@@ -81,15 +83,13 @@ const DeleteResume = async (Item) => {
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded duration-300 flex items-end justify-center opacity-0 group-hover:opacity-100">
               <div className="flex-1 gap-10 mb-5 items-center justify-center   transition-transform duration-300">
                 <div className='flex items-center justify-around mb-4'>
-                
                 <button
-                   onClick={() => handelEditResume(Item)}  
+                   onClick={() =>handelEditResume(Item)}  
                   className="p-2 animate-bounce hover:bg-gray-500 bg-gray-600 rounded px-6 shadow-sm hover:shadow-md transition-all flex items-center space-x-1"
                 >
                   <Edit className="w-4 h-4 text-blue-600" />
                   <span className="text-sm text-white">Edit</span>
                 </button>
-                
                 <button
                 onClick={()=>DeleteResume(Item)}
                   className="p-2 bg-gray-600 animate-bounce hover:bg-gray-500 rounded px-6 shadow-sm hover:shadow-md transition-all flex items-center space-x-1"
@@ -99,6 +99,7 @@ const DeleteResume = async (Item) => {
                 </button>
                 </div>
                 <button
+                onClick={()=>setIsPreviewOpen(true)}
                   className="p-2 animate-bounce bg-gray-600 hover:bg-gray-500 ml-12 rounded px-10 shadow-sm hover:shadow-md transition-all flex items-center space-x-1"
                 >
                   <File className="w-4 h-4 text-green-600" />
@@ -109,6 +110,11 @@ const DeleteResume = async (Item) => {
           </div>
       
       ))}
+      <PreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        templateId={1}
+      />
     </div>
   )
 }

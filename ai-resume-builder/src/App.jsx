@@ -13,9 +13,10 @@ import axios from 'axios';
 import { setUser } from './redux/AuthSlice';
 import { useDispatch } from 'react-redux';
 import ViewResume from './Pages/Dashboard/resume/[resumeId]/view';
+import ResumeBuilder from './Pages/Dashboard/resume/BuildResumewithPrompt';
 
 function App() {
-    UseGetAllResume(); // ✅ Custom hook is fine
+    UseGetAllResume(); 
 
     const dispatch = useDispatch();
 
@@ -39,6 +40,7 @@ function App() {
                 <Header />
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/resume" element={<ResumeBuilder />} />
                     <Route path="/auth/sign-in" element={<SignIn />} />
                     <Route path="/dashboard" element={<Dashbord />} />
                     <Route path="/resume/create" element={<CreateResume />} />

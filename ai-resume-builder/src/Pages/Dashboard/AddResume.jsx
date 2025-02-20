@@ -18,9 +18,11 @@ import RecentResumeCard from './RecentResumeCard';
 
 
 
+
 const AddResume = () => {
   const [openDailog,setopenDailog]=useState(false);
   const [loader,setloader]=useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const navigate=useNavigate();
   const {updateTitle ,Resumetitle} =useResumeStore();
@@ -66,7 +68,6 @@ const AddResume = () => {
     </DialogHeader>
   </DialogContent>
 </Dialog>
-
     </div>
   )
 }

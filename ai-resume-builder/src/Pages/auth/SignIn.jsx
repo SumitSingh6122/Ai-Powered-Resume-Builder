@@ -152,7 +152,7 @@ const SignIn = () => {
                   <EyeOffIcon onClick={() => setPassVisible(true)} className={`icon mr-2 ${isPassFocus?'opacity-100':'opacity-0'}`} />
                 )}
               </div>
-              { password.length>0 &&   <div className="relative mt-2 flex text-gray-500 text-[12px]">
+              { password.length>0 && !isSignIn && (  <div className="relative mt-2 flex text-gray-500 text-[12px]">
                 <ul>
                   {[
                     { text: "Password must contain 8 letters", key: "minLength" },
@@ -165,7 +165,7 @@ const SignIn = () => {
                     </li>
                   ))}
                 </ul>
-              </div> }
+              </div> )}
              
 
             </div>
