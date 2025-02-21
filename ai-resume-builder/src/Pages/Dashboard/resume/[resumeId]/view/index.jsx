@@ -51,6 +51,7 @@ const ViewResume = () => {
     3: ExecutiveTemplate,
     4: MinimalTemplate,
   };
+  
 
   return (
     <div className='w-full min-h-fit bg-gradient-to-b from-gray-700 to-[#000000] absolute'>
@@ -78,7 +79,7 @@ const ViewResume = () => {
             
         </div>
 <div className='w-full flex items-center justify-center'>
-      <div id="resume-preview" className="h-[900px]  scrollbar-hideee border-black border-1 w-[850px] overflow-y-auto">
+      <div id="resume-preview" className="h-[900px]  scrollbar-hideee border-black border-1 w-[900px] overflow-y-auto">
         {resumeData && React.createElement(templates[resumeData?.ResumeTemplateId] || ModernTemplate)}
       </div></div>
     </div>

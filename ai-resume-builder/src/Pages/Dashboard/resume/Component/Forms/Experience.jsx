@@ -30,6 +30,7 @@ const generateMonthYearOptions = (startYear = 2000, endYear = new Date().getFull
 export default function Experience() {
   const { experience, addExperience, updateExperience, removeExperience } = useResumeStore();
   const [content, setcontent] = useState({});
+  const [aiPrompts, setAiPrompts] = useState({});
   const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
 
   const handleChange = (index, value) => {
@@ -40,6 +41,43 @@ export default function Experience() {
   
   };
   
+  const handleModifyDescription = async (position,index) => {
+    const prompt = aiPrompts[index];
+    if (!prompt) return;
+
+    const updatedExperience = [...experience];
+    updatedExperience[index] = { ...updatedExperience[index], isLoading: true };
+    updateExperience(index, updatedExperience[index]);
+  
+      const result = await AichatSession.sendMessage(`Modify this job description: ${content[index]} based on this prompt: ${prompt} and  Generate 4-5 bullet points for a job experience section for the position of "${position}". 
+Only return a valid JSON array without any additional text. Example output:
+["Bullet point 1", "Bullet point 2", "Bullet point 3", "Bullet point 4", "Bullet point 5"]`);
+try {
+  const result = await AichatSession.sendMessage(prompt);
+  const data = await result.response.text();
+
+  let cleanData = data.replace(/```json|```/g, "").trim();
+  if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
+    const parsedData = JSON.parse(cleanData);
+
+   
+    updatedExperience[index] = {
+      ...updatedExperience[index],
+      aiDescriptions: parsedData,
+      isLoading: false,
+    };
+    updateExperience(index, updatedExperience[index]);
+    setAiPrompts({});
+  } else {
+    console.error("Invalid AI response format:", cleanData);
+  }
+} catch (error) {
+  console.error("Error generating work summary:", error);
+  updatedExperience[index] = { ...updatedExperience[index], isLoading: false };
+  updateExperience(index, updatedExperience[index]);
+}
+   
+  };
   const appendDescriptionToQuill = (index, description) => {
     const currentContent = experience[index]?.description || ""; // Get current editor content
     
@@ -53,7 +91,9 @@ export default function Experience() {
     updatedExperience[index] = { ...updatedExperience[index], isLoading: true };
     updateExperience(index, updatedExperience[index]);
 
-    const prompt = `position title: ${position}, Depending on the position title, give me 4-5 bullet points for my experience in a resume (Please give that in array format, not JSON, and give only one array and do not give any text output).`;
+    const prompt = `You are a resume AI assistant. Generate 4-5 bullet points for a job experience section for the position of "${position}". 
+Only return a valid JSON array without any additional text. Example output:
+["Bullet point 1", "Bullet point 2", "Bullet point 3", "Bullet point 4", "Bullet point 5"]`;
 
     try {
       const result = await AichatSession.sendMessage(prompt);
@@ -248,20 +288,21 @@ export default function Experience() {
               </div>
             )) )   }
            
-         <div className="mt-6">
-                  <h2 className="text-gray-400 font-semibold mb-2">Modify your Description with AI</h2>
-                  <div className="flex items-center bg-gray-700 p-2 rounded">
-                    <input
-                      type="text"
-                      
-                      placeholder="Enter your prompt"
-                      className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
-                    />
-                    <button type="button"  className="ml-2">
-                      <IoSend className="text-white hover:text-gray-200 text-4xl" />
-                    </button>
-                  </div>
-                </div>
+           <div className="mt-6">
+              <h2 className="text-gray-400 font-semibold mb-2">Modify your Description with AI</h2>
+              <div className="flex items-center bg-gray-700 p-2 rounded">
+                <input
+                  type="text"
+                  value={aiPrompts[index] || ""}
+                  onChange={(e) => setAiPrompts((prev) => ({ ...prev, [index]: e.target.value }))}
+                  placeholder="Enter your prompt"
+                  className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
+                />
+                <button type="button"  onClick={() => handleModifyDescription(exp.description,index)} className="ml-2">
+                  <IoSend className="text-white hover:text-gray-200 text-4xl" />
+                </button>
+              </div>
+            </div>
           </div>
         ))}
       </div>
