@@ -64,7 +64,7 @@ const PersonalDetail = () => {
   };
 
   const handleChange = (name, value) => {
-   
+    
     validateInput(name, value);
   };
   const handleFileChange = (e) => {

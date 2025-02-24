@@ -82,15 +82,7 @@ export const useResumeStore = create((set) => {
     skills: {
       technical: ['JavaScript', 'React', 'Node.js', 'MongoDB'],
       soft: ['Communication', 'Teamwork', 'Problem-Solving'],
-      languages: ['English', 'Spanish'],
-      tools: ['Git', 'VS Code', 'Postman'],
-      design: ['Figma',
-        'Adobe CC',
-        'Sketch',
-        'After Effects',
-        'HTML/CSS',
-        'JavaScript',
-        'Webflow'],
+  
     },
   });
 
@@ -234,9 +226,7 @@ export const useResumeStore = create((set) => {
         AtsKeyword:[],
         skills: {
           technical: [],
-          soft: [],
-          languages: [],
-          tools: [],
+          soft: []
         },
       })),
   };

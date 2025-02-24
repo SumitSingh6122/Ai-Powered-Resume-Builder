@@ -88,8 +88,8 @@ export const LoginUser = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
-            sameSite: "Lax",
-            secure: process.env.NODE_ENV === "production",
+            sameSite: "None",
+            secure: "true",
         });
 
         return res.status(200).json({
@@ -112,8 +112,8 @@ export const LoginUser = async (req, res) => {
 export const Logout = (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        sameSite:"lax",     
-        secure: process.env.NODE_ENV === "production", 
+       sameSite: "None",
+            secure: "true",
           path: "/"
               
     });
@@ -158,9 +158,8 @@ export const googleLogin = async (req, res) => {
         res.cookie('token', token, { 
             httpOnly: true,
   maxAge: 24 * 60 * 60 * 1000,
-  sameSite: "Lax",
-  
-  secure: process.env.NODE_ENV === "production",
+  sameSite: "None",
+            secure: "true",
         });
 
         return res.status(200).json({
@@ -232,8 +231,8 @@ export const githubLogin = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
-            sameSite: "Lax",
-            secure: process.env.NODE_ENV === "production",
+           sameSite: "None",
+            secure: "true",
         });
 
         return res.status(200).json({

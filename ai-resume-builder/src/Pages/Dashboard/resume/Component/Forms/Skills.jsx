@@ -63,8 +63,7 @@ export function SkillsSection() {
             >
               <option value="technical">Technical</option>
               <option value="soft">Soft</option>
-              <option value="languages">Languages</option>
-              <option value="tools">Tools</option>
+             
             </select>
 
             <div className="flex-1 relative">

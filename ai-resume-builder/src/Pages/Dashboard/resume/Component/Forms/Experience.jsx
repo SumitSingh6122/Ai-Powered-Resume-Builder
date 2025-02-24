@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { Briefcase, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useResumeStore } from "../../../../Store/useResumeStore";
@@ -31,6 +31,7 @@ export default function Experience() {
   const { experience, addExperience, updateExperience, removeExperience } = useResumeStore();
   const [content, setcontent] = useState({});
   const [aiPrompts, setAiPrompts] = useState({});
+  const [AiPromptInput, setAiPromptInput] = useState({});
   const monthYearOptions = generateMonthYearOptions(2000, new Date().getFullYear());
 
   const handleChange = (index, value) => {
@@ -38,55 +39,67 @@ export default function Experience() {
     const updatedExperience = [...experience];
     updatedExperience[index] = { ...updatedExperience[index], description: value };
     updateExperience(index, updatedExperience[index]);
-  
+
   };
-  
-  const handleModifyDescription = async (position,index) => {
+  useEffect(() => {
+    if (experience.length > 0) {
+      setcontent(
+        experience.map((exp) =>
+          Array.isArray(exp.description) ? exp.description.join("") : exp.description || "<p></p>"
+        )
+      );
+    }
+  }, []);
+
+
+
+  const handleModifyDescription = async (position, index) => {
     const prompt = aiPrompts[index];
     if (!prompt) return;
 
     const updatedExperience = [...experience];
     updatedExperience[index] = { ...updatedExperience[index], isLoading: true };
     updateExperience(index, updatedExperience[index]);
-  
+
+
+    try {
       const result = await AichatSession.sendMessage(`Modify this job description: ${content[index]} based on this prompt: ${prompt} and  Generate 4-5 bullet points for a job experience section for the position of "${position}". 
-Only return a valid JSON array without any additional text. Example output:
-["Bullet point 1", "Bullet point 2", "Bullet point 3", "Bullet point 4", "Bullet point 5"]`);
-try {
-  const result = await AichatSession.sendMessage(prompt);
-  const data = await result.response.text();
+    Only return a valid JSON array without any additional text. Example output:
+    ["Bullet point 1", "Bullet point 2", "Bullet point 3", "Bullet point 4", "Bullet point 5"]`);
+      const data = await result.response.text();
 
-  let cleanData = data.replace(/```json|```/g, "").trim();
-  if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
-    const parsedData = JSON.parse(cleanData);
+      let cleanData = data.replace(/```json|```/g, "").trim();
+      if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
+        const parsedData = JSON.parse(cleanData);
 
-   
-    updatedExperience[index] = {
-      ...updatedExperience[index],
-      aiDescriptions: parsedData,
-      isLoading: false,
-    };
-    updateExperience(index, updatedExperience[index]);
-    setAiPrompts({});
-  } else {
-    console.error("Invalid AI response format:", cleanData);
-  }
-} catch (error) {
-  console.error("Error generating work summary:", error);
-  updatedExperience[index] = { ...updatedExperience[index], isLoading: false };
-  updateExperience(index, updatedExperience[index]);
-}
-   
+
+        updatedExperience[index] = {
+          ...updatedExperience[index],
+          aiDescriptions: parsedData,
+          isLoading: false,
+        };
+        updateExperience(index, updatedExperience[index]);
+        setAiPrompts({});
+
+      } else {
+        console.error("Invalid AI response format:", cleanData);
+      }
+    } catch (error) {
+      console.error("Error generating work summary:", error);
+      updatedExperience[index] = { ...updatedExperience[index], isLoading: false };
+      updateExperience(index, updatedExperience[index]);
+    }
+
   };
   const appendDescriptionToQuill = (index, description) => {
-    const currentContent = experience[index]?.description || ""; // Get current editor content
-    
-    const newContent = `${currentContent}<ul><li>${description}</li></ul>`; 
-    handleChange(index, newContent); // Update the state and editor content
-  }; 
-  
+    const currentContent = experience[index]?.description || "";
+
+    const newContent = `${currentContent}<ul><li>${description}</li></ul>`;
+    handleChange(index, newContent);
+  };
+
   const GenerateWorkSummary = async (position, index) => {
-   
+
     const updatedExperience = [...experience];
     updatedExperience[index] = { ...updatedExperience[index], isLoading: true };
     updateExperience(index, updatedExperience[index]);
@@ -103,13 +116,14 @@ Only return a valid JSON array without any additional text. Example output:
       if (cleanData.startsWith("[") && cleanData.endsWith("]")) {
         const parsedData = JSON.parse(cleanData);
 
-       
+
         updatedExperience[index] = {
           ...updatedExperience[index],
           aiDescriptions: parsedData,
           isLoading: false,
         };
         updateExperience(index, updatedExperience[index]);
+        setAiPromptInput({ [index]: true });
       } else {
         console.error("Invalid AI response format:", cleanData);
       }
@@ -231,14 +245,20 @@ Only return a valid JSON array without any additional text. Example output:
                 />
               </div>
 
-              <div className="md:col-span-2">
+              <div className="md:col-span-2  w-full">
                 <div className="flex items-center justify-between">
                   <label className="block text-sm font-medium text-gray-300 mb-1">Work Description</label>
                   <button
                     type="button"
                     onClick={() => GenerateWorkSummary(exp.position, index)}
-                    disabled={exp.isLoading} 
-                    className={`mb-2 px-3 py-2 rounded text-white flex items-center ${exp.isLoading ? "bg-blue-500  cursor-not-allowed" : "bg-blue-500 hover:bg-blue-700"
+                    disabled={
+                      exp.isLoading ||
+                      !exp.company ||
+                      !exp.position
+                    }
+                    className={`mb-2 px-3 py-2 rounded text-white flex items-center ${exp.isLoading || !exp.company || !exp.position
+                        ? "bg-gray-500 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-700"
                       }`}
                   >
                     {exp.isLoading ? (
@@ -252,6 +272,7 @@ Only return a valid JSON array without any additional text. Example output:
                     )}
                   </button>
 
+
                 </div>
 
                 <ReactQuill
@@ -261,23 +282,24 @@ Only return a valid JSON array without any additional text. Example output:
                   theme="snow"
                   className="h-40 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
                 />
-        
-                
+
+
 
               </div>
             </div>
-           { exp.isLoading ? (
+          
+            {exp.isLoading ? (
               <SkeletonTheme baseColor="#b3b1b1" highlightColor="#444">
-                         <p>
-                           <Skeleton count={4} />
-                         </p>
-                       </SkeletonTheme>
-           ): (  exp.aiDescriptions?.map((Des, descIndex) => (
+                <p className="w-full">
+                  <Skeleton count={4} />
+                </p>
+              </SkeletonTheme>
+            ) : (exp.aiDescriptions?.map((Des, descIndex) => (
               <div
-                className="bg-gray-600 relative mt-1 rounded h-14 p-2 flex"
+                className="bg-gray-600 relative w-full  mt-1 rounded p-2 flex-col"
                 key={`${Des}-${descIndex}`}
               >
-                <p className="text-white text-sm">{Des}</p>
+                <p className="text-white  text-sm">{Des}</p>
                 <button
                   type="button"
                   className="px-3 py-2 bg-blue-500 absolute right-1 top-0 rounded text-white hover:bg-blue-700 transition-colors mt-2"
@@ -286,23 +308,28 @@ Only return a valid JSON array without any additional text. Example output:
                   <Plus />
                 </button>
               </div>
-            )) )   }
-           
-           <div className="mt-6">
-              <h2 className="text-gray-400 font-semibold mb-2">Modify your Description with AI</h2>
-              <div className="flex items-center bg-gray-700 p-2 rounded">
-                <input
-                  type="text"
-                  value={aiPrompts[index] || ""}
-                  onChange={(e) => setAiPrompts((prev) => ({ ...prev, [index]: e.target.value }))}
-                  placeholder="Enter your prompt"
-                  className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
-                />
-                <button type="button"  onClick={() => handleModifyDescription(exp.description,index)} className="ml-2">
-                  <IoSend className="text-white hover:text-gray-200 text-4xl" />
-                </button>
+            )))
+            }
+
+            {AiPromptInput[index] && (
+              <div className="mt-6">
+                <h2 className="text-gray-400 font-semibold mb-2">Modify your Description with AI</h2>
+                <div className="flex items-center bg-gray-700 p-2 rounded">
+                  <input
+                    type="text"
+                    value={aiPrompts[index] || ""}
+                    onChange={(e) => setAiPrompts((prev) => ({ ...prev, [index]: e.target.value }))}
+                    placeholder="Enter your prompt"
+                    className="flex-1 px-3 text-white py-2 bg-transparent outline-none border-none"
+                  />
+                  <button type="button" onClick={() => handleModifyDescription(exp.description, index)} className="ml-2 p-2 hover:bg-gray-600 rounded">
+                    <IoSend className="text-white hover:text-gray-200 text-2xl" />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
+
+
           </div>
         ))}
       </div>
