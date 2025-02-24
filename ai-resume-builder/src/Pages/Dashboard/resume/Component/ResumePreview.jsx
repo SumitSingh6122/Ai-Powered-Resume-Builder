@@ -127,9 +127,9 @@ const ResumePreview = ({EditPage}) => {
          <button onClick={()=>setOpenMenu((prev)=>!prev)} ><CiMenuKebab className="text-[25px] ml-2 h-16  text-white" /></button>
          { OpenMenu && 
           <div className="absolute right-3  rounded text-white top-20 h-38 w-48 bg-gray-700">
-          <ul  className="flex-col mr-3  "><li className="px-3 py-2 rounded hover:bg-slate-600 w-full inline-flex "><FcInspection className="text-[30px] mr-2" />Update Changes</li>
-          <li onClick={handleDownloadPDF} className="px-4 py-2 w-full rounded hover:bg-slate-600  inline-flex"><Download className="text-green-600 mr-2" />Dowload</li>
-          <li className="px-4 py-2 rounded w-full hover:bg-slate-600 inline-flex">
+          <div  className="flex-col mr-3 ml-5 list-none "><p className="px-4 py-2 rounded hover:bg-slate-600 w-full inline-flex  "><FcInspection className="text-[30px] mr-2" />Update Changes</p>
+          <p onClick={handleDownloadPDF} className="px-4 py-2 w-full rounded hover:bg-slate-600 inline-flex"><Download className="text-green-600 mr-2" />Dowload</p>
+          <p className="px-4 py-2 rounded w-full hover:bg-slate-600 inline-flex">
             <RWebShare
         data={{
           text: "Hello Everyone, This is my resume please open url to see it",
@@ -139,9 +139,9 @@ const ResumePreview = ({EditPage}) => {
       >
         <button className=" inline-flex"><FaShare className="mr-2 text-[20px] text-green-400" /> Share</button>
       </RWebShare>
-      </li>
-      <li onClick={()=>window.location.href=`${import.meta.env.VITE_BASE_URL}/resume/${resumeId}/view`} className="px-4 py-2 w-full rounded hover:bg-slate-600  inline-flex"><View className="text-green-600 mr-2" />View</li>
-      </ul>
+      </p>
+      <p onClick={()=>window.location.href=`${import.meta.env.VITE_BASE_URL}/resume/${resumeId}/view`} className="px-4 py-2 w-full rounded hover:bg-slate-600  inline-flex"><View className="text-green-600 mr-2" />View</p>
+      </div>
          </div>}
          
         </div>
