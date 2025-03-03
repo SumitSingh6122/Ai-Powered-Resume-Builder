@@ -28,6 +28,7 @@ const Summary = () => {
 
   const GenerateSummary = async () => {
     setLoading(true);
+   
     try {
       const Aiprompt = `
         Generate a JSON array containing 4 different ATS-friendly summaries for the given job title and experience level, and consider job description for better output if it was availbale if it not than based on reast data generate ats friendly summary.
@@ -72,6 +73,7 @@ const Summary = () => {
     } catch (error) {
       console.error('Error generating summary:', error);
     } finally {
+      setAipromptVisible(true);
       setLoading(false);
     }
   };

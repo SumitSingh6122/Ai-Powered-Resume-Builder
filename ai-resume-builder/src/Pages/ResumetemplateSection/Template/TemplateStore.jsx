@@ -46,7 +46,19 @@ const TemplateStore = ({isOpen,onClose}) => {
           id: '5',
           name: 'Classical professional',
           description: 'Traditional layout with a modern minimal twist',
-          preview: '/TemplateImage/template4.png'
+          preview: '/TemplateImage/template5.png'
+        },
+        {
+          id: '6',
+          name: 'Classical professional',
+          description: 'Traditional layout with a modern minimal twist',
+          preview: '/TemplateImage/template6.png'
+        },
+        {
+          id: '7',
+          name: 'Classical professional',
+          description: 'Traditional layout with a modern minimal twist',
+          preview: '/TemplateImage/template7.png'
         }
       ];
       

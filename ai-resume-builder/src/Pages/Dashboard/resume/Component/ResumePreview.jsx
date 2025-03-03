@@ -18,6 +18,7 @@ import { FaShare } from "react-icons/fa";
 import { Update } from "@mui/icons-material";
 import { FcInspection } from "react-icons/fc";
 import { RWebShare } from "react-web-share";
+import { Template5, Template6, Template7 } from "@/Pages/ResumetemplateSection/Template/Template5";
 
 const ResumePreview = ({EditPage}) => {
   const { resumeInfo } = useContext(ResumeInfoContext);
@@ -37,6 +38,9 @@ const ResumePreview = ({EditPage}) => {
     2: CreativeTemplate,
     3: ExecutiveTemplate,
     4: MinimalTemplate,
+    5:Template5,
+    6:Template6,
+    7:Template7
   };
   const HandelEditResume=async()=>{
      try {
@@ -127,9 +131,9 @@ const ResumePreview = ({EditPage}) => {
          <button onClick={()=>setOpenMenu((prev)=>!prev)} ><CiMenuKebab className="text-[25px] ml-2 h-16  text-white" /></button>
          { OpenMenu && 
           <div className="absolute right-3  rounded text-white top-20 h-38 w-48 bg-gray-700">
-          <ul  className="flex-col mr-3  "><li className="px-3 py-2 rounded hover:bg-slate-600 w-full inline-flex "><FcInspection className="text-[30px] mr-2" />Update Changes</li>
-          <li onClick={handleDownloadPDF} className="px-4 py-2 w-full rounded hover:bg-slate-600  inline-flex"><Download className="text-green-600 mr-2" />Dowload</li>
-          <li className="px-4 py-2 rounded w-full hover:bg-slate-600 inline-flex">
+          <div  className="flex-col mr-3 ml-5 list-none "><p className="px-4 py-2 rounded hover:bg-slate-600 w-full inline-flex  "><FcInspection className="text-[30px] mr-2" />Update Changes</p>
+          <p onClick={handleDownloadPDF} className="px-4 py-2 w-full rounded hover:bg-slate-600 inline-flex"><Download className="text-green-600 mr-2" />Dowload</p>
+          <p className="px-4 py-2 rounded w-full hover:bg-slate-600 inline-flex">
             <RWebShare
         data={{
           text: "Hello Everyone, This is my resume please open url to see it",
@@ -139,14 +143,15 @@ const ResumePreview = ({EditPage}) => {
       >
         <button className=" inline-flex"><FaShare className="mr-2 text-[20px] text-green-400" /> Share</button>
       </RWebShare>
-      </li>
-      <li onClick={()=>window.location.href=`${import.meta.env.VITE_BASE_URL}/resume/${resumeId}/view`} className="px-4 py-2 w-full rounded hover:bg-slate-600  inline-flex"><View className="text-green-600 mr-2" />View</li>
-      </ul>
+      </p>
+      <p onClick={()=>window.location.href=`${import.meta.env.VITE_BASE_URL}/resume/${resumeId}/view`} className="px-4 py-2 w-full rounded hover:bg-slate-600  inline-flex"><View className="text-green-600 mr-2" />View</p>
+      </div>
          </div>}
          
         </div>
         <div
           id="resume-preview"
+          contentEditable={true}
           className="h-[880px] scrollbar-hideee overflow-y-auto"
         >
           {React.createElement(templates[ResumeTemplateId])}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Globe, Award, Calendar } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, Award, Calendar, Code } from 'lucide-react';
 import { useResumeStore } from '../../Store/useResumeStore';
 
 export function ModernTemplate() {
@@ -9,9 +9,11 @@ export function ModernTemplate() {
     experience = [ ], 
     skills = { technical: [] }, 
     education = [], 
-    certifications = [] 
+    projects=[],
+    certifications = [] ,
+    experiencelevel,
   } = useResumeStore();
-
+console.log(experiencelevel);
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white text-gray-800">
       <header className="border-b-2 border-blue-600 pb-6">
@@ -47,7 +49,7 @@ export function ModernTemplate() {
           )}
         </div>
       </header>
-
+  
       <section className="mt-8">
         <h3 className="text-lg font-bold text-gray-900 flex items-center">
           <Award className="h-5 w-5 mr-2 text-blue-600" />
@@ -56,31 +58,67 @@ export function ModernTemplate() {
         <div className="mt-3 text-gray-700">{summary || 'Add a summary here.'}</div>
       </section>
 
-      <section className="mt-8">
-        <h3 className="text-lg font-bold text-gray-900 flex items-center">
-          <Calendar className="h-5 w-5 mr-2 text-blue-600" />
-          Professional Experience
-        </h3>
-        <div className="mt-4 space-y-6">
-          {experience.length ? (
-            experience.map((job, index) => (
-              <div key={index}>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-bold text-gray-900">{job.position || 'Position'}</h4>
-                    <div className="text-blue-600">{job.company || 'Company'}</div>
-                  </div>
-                  <span className="text-gray-600 text-sm">{`${job.startDate || ''} - ${job.endDate || ''}`}</span>
-                </div>
-                <div className="mt-2 text-gray-700 " dangerouslySetInnerHTML={{ __html: job.description }}></div>
-           
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-600">Add your professional experience here.</p>
-          )}
+      { experiencelevel ? ( 
+  <section className="mt-8">
+  <h3 className="text-lg font-bold text-gray-900 flex items-center">
+    <Code className="h-5 w-5 mr-2 text-blue-600" />
+    Projects
+  </h3>
+  <div className="mt-3 space-y-6">
+    {projects.length ? (
+       <div className="grid grid-cols-2 gap-4">
+       {projects?.map((project) => (
+         <div key={project.title}>
+          <div className='flex '>    <h2 className="font-medium text-gray-900">{project.title}</h2>     <span className="flex items-center absolute right-8 text-sm">
+                 <Globe className="h-4 w-4 mr-2 text-blue-600" />
+                 <a 
+                   href={project.link} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="text-blue-600 hover:underline"
+                 >
+                   Live Demo
+                 </a>
+               </span></div>
+        
+
+           <div dangerouslySetInnerHTML={{ __html:project.description  }} className="text-gray-700  w-[650px] text-sm mt-1" />
+
+         </div>
+       ))}
+     </div>
+    ) : (
+      <p className="text-gray-600">Add your projects here.</p>
+    )}
+  </div>
+</section>) :(
+  <section className="mt-8">
+  <h3 className="text-lg font-bold text-gray-900 flex items-center">
+    <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+    Professional Experience
+  </h3>
+  <div className="mt-4 space-y-6">
+    {experience.length ? (
+      experience.map((job, index) => (
+        <div key={index}>
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="font-bold text-gray-900">{job.position || 'Position'}</h4>
+              <div className="text-blue-600">{job.company || 'Company'}</div>
+            </div>
+            <span className="text-gray-600 text-sm">{`${job.startDate || ''} - ${job.endDate || ''}`}</span>
+          </div>
+          <div className="mt-2 text-gray-700 " dangerouslySetInnerHTML={{ __html: job.description }}></div>
+     
         </div>
-      </section>
+      ))
+    ) : (
+      <p className="text-gray-600">Add your professional experience here.</p>
+    )}
+  </div>
+</section>)
+
+   }
 
       <div className="grid grid-cols-2 gap-8 mt-8">
         <section>
@@ -106,7 +144,7 @@ export function ModernTemplate() {
           {education.length ? (
             education.map((edu, index) => (
               <div key={index} className="mt-3">
-                <div className="font-bold text-gray-900">{edu.degree || 'Degree'}</div>
+                <div className="font-bold text-gray-900">{edu.degree || 'Degree'}<span className='text-blue-600 ml-1  font-medium'>{edu.field}</span></div>
                 <div className="text-blue-600">{edu.school || 'Institution'}</div>
                 <div className="text-gray-600 text-sm">{edu.graduationDate || ''}</div>
               </div>

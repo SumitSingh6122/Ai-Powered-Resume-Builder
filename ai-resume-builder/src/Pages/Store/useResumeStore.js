@@ -21,6 +21,7 @@ export const useResumeStore = create((set) => {
     
     },
     Resumetitle:'Full stack',
+    experiencelevel:false,
     position:'Full stack developer',
     level:"fresher",
     ResumeTemplateId:'1',
@@ -101,6 +102,7 @@ export const useResumeStore = create((set) => {
       
    updateResumeTemplateID:(ResumeTemplateId)=>set({ResumeTemplateId}),
    updateLevel: (level) => set({ level }),
+   updateExperiencelevel:(experiencelevel)=>set({experiencelevel}),
     updateSummary: (summary) => set({ summary }),
    
 
@@ -216,7 +218,6 @@ export const useResumeStore = create((set) => {
       GithubUrl: { text: '', link: '' },
         },
         summary: '',
-        Resumetitle:'',
         experience: [],
         education: [],
         projects: [],

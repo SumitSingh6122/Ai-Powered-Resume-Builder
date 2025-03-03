@@ -6,6 +6,9 @@ import {CreativeTemplate} from './Template/Template1';
 import { ExecutiveTemplate } from './Template/Template2';
 import { MinimalTemplate } from './Template/Template3';
 
+import { Template5, Template6, Template7 } from './Template/Template5';
+
+
 
 
 
@@ -14,8 +17,12 @@ const templates = {
   2: CreativeTemplate,
   3: ExecutiveTemplate,
   4: MinimalTemplate,
+  5: Template5,
+  6:Template6,
+  7:Template7
 
 };
+console.log(templates);
 
 export function PreviewModal({ isOpen, onClose, templateId }) {
   const Template = templates[templateId ];

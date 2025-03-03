@@ -32,6 +32,24 @@ const templates = [
     description: 'Traditional layout with a modern minimal twist',
     preview: '/TemplateImage/template4.png'
   },
+  {
+    id: '5',
+    name: 'Minimal Classic',
+    description: 'Traditional layout with a modern minimal twist',
+    preview: '/TemplateImage/template5.png'
+  },
+  {
+    id: '6',
+    name: 'Minimal Classic',
+    description: 'Traditional layout with a modern minimal twist',
+    preview: '/TemplateImage/template6.png'
+  },
+  {
+    id: '7',
+    name: 'Minimal Classic',
+    description: 'Traditional layout with a modern minimal twist',
+    preview: '/TemplateImage/template7.png'
+  },
 
 ];
 

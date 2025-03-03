@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Star, Cpu, KeyRound, X, Plus, PlusCircle } from 'lucide-react';
+import { FileText, Star, Cpu, KeyRound, X, Plus, PlusCircle, FileEdit } from 'lucide-react';
 import { useResumeStore } from '@/Pages/Store/useResumeStore';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AichatSession } from '@/Pages/Service/geminiapi';
@@ -11,13 +11,13 @@ export default function ResumeCreateHeader() {
   const [activeTab, setActiveTab] = useState('description');
   const [isBoxOpen, setIsBoxOpen] = useState(false);
   const [atsData, setAtsData] = useState({ score: null, keywords: [] });
-  
+
   const [enhancementResults, setEnhancementResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [jobDescription, setJobDescription] = useState('');
   const [error, setError] = useState('');
 
-  const { personalInfo, position, level,addSkill ,summary, experience, education, projects, certifications, skills } = useResumeStore();
+  const { personalInfo, position, level, addSkill, summary, experience, education, projects, certifications, skills } = useResumeStore();
 
   const parseAIResponse = (rawData) => {
     try {
@@ -37,10 +37,10 @@ export default function ResumeCreateHeader() {
     setLoading(true);
     setError('');
     setEnhancementResults(null);
-    
+
     try {
       const currentState = useResumeStore.getState();
-      
+
       const prompt = `Analyze and enhance this resume for a ${currentState.position} position (${currentState.level} level). 
       Respond with JSON containing:
       {
@@ -56,13 +56,13 @@ export default function ResumeCreateHeader() {
       Do NOT give example give it only valid result.
       DO NOT add explanations.  
       `;
-      
+
       const result = await AichatSession.sendMessage(prompt);
       const rawData = await result.response.text();
       const enhancements = parseAIResponse(rawData);
-  
+
       if (!enhancements) return;
-  
+
       // Update store
       useResumeStore.setState(state => ({
         summary: enhancements.summary || state.summary,
@@ -70,29 +70,29 @@ export default function ResumeCreateHeader() {
           technical: [...new Set([...state.skills.technical, ...enhancements.skills.technical])],
           soft: [...new Set([...state.skills.soft, ...enhancements.skills.soft])]
         } : state.skills,
-        experience: enhancements.experience 
-          ? state.experience.map((e, i) => 
-              enhancements.experience.find(enh => enh.index === i) 
-              ? {...e, description: enhancements.experience.find(enh => enh.index === i).description}
+        experience: enhancements.experience
+          ? state.experience.map((e, i) =>
+            enhancements.experience.find(enh => enh.index === i)
+              ? { ...e, description: enhancements.experience.find(enh => enh.index === i).description }
               : e
-            )
+          )
           : state.experience,
         projects: enhancements.projects
           ? state.projects.map((p, i) =>
-              enhancements.projects.find(proj => proj.index === i)
-              ? {...p, description: enhancements.projects.find(proj => proj.index === i).description}
+            enhancements.projects.find(proj => proj.index === i)
+              ? { ...p, description: enhancements.projects.find(proj => proj.index === i).description }
               : p
-            )
+          )
           : state.projects
       }));
-  
+
       // Store enhancement results for display
       setEnhancementResults({
         suggestions: enhancements.suggestions,
         keywords: enhancements.keywords,
         optimizations: enhancements.optimizations
       });
-  
+
     } catch (error) {
       console.error("AI enhancement failed:", error);
       setError("AI enhancement failed. Please try again.");
@@ -105,7 +105,7 @@ export default function ResumeCreateHeader() {
   const HandelAtsScore = async () => {
     setLoading(true);
     setError('');
-    
+
     const prompt = `Calculate ATS compatibility score (0-100) for this resume applying to ${position}.
     Job Description: ${jobDescription}
     Resume Data: ${JSON.stringify({
@@ -125,7 +125,7 @@ export default function ResumeCreateHeader() {
     try {
       const result = await AichatSession.sendMessage(prompt);
       const response = parseAIResponse(await result.response.text());
-      
+
       if (response) {
         setAtsData({
           score: response.score,
@@ -139,18 +139,19 @@ export default function ResumeCreateHeader() {
     }
   };
 
+
   const renderAtsScore = () => (
     <div className="space-y-4">
       <button onClick={HandelAtsScore} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
-              Check ATS Score
-            </button>
+        Check ATS Score
+      </button>
       <div className="flex items-center gap-2 mb-4">
         <Star className="text-yellow-500" />
         <span className="text-lg font-semibold text-white">
           ATS Score: {atsData.score}/100
         </span>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 bg-gray-700 rounded-lg">
           <h4 className="text-blue-400 mb-2">Matched Keywords</h4>
@@ -190,13 +191,13 @@ export default function ResumeCreateHeader() {
 
   const renderEnhancements = () => (
     <div className="space-y-4">
-      <button 
-        onClick={HandleResumeEnhancement} 
+      <button
+        onClick={HandleResumeEnhancement}
         className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90"
       >
         AI Enhancement
       </button>
-  
+
       {enhancementResults && (
         <div className="mt-4 space-y-4">
           <div className="p-4 bg-gray-700 rounded-lg">
@@ -207,9 +208,9 @@ export default function ResumeCreateHeader() {
               ))}
             </ul>
           </div>
-  
 
-  
+
+
           <div className="p-4 bg-gray-700 rounded-lg">
             <h4 className="text-yellow-400 mb-2">Optimizations</h4>
             <ul className="list-disc pl-4 space-y-2">
@@ -223,7 +224,10 @@ export default function ResumeCreateHeader() {
     </div>
   );
 
-  
+
+  const [isToggled, setIsToggled] = useState(false);
+
+
   const renderContent = () => {
     if (loading) return (
       <SkeletonTheme baseColor="#b3b1b1" highlightColor="#444">
@@ -240,7 +244,7 @@ export default function ResumeCreateHeader() {
       case 'description':
         return (
           <div className=''>
-            <textarea 
+            <textarea
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               className="w-full h-32 p-3 border rounded-lg bg-gray-800 text-white border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -254,20 +258,58 @@ export default function ResumeCreateHeader() {
         return renderEnhancements();
       case 'custom edit':
         return (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            <FileEdit className="w-4 h-4" />
-            Custom Edit
-          </motion.button>
+          <div >
+
+
+
+            <label className="flex items-center cursor-pointer mb-6">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  id="toggle"
+                  checked={isToggled}
+                  onChange={() => setIsToggled(!isToggled)}
+                />
+                <div
+                  className="toggle__line w-32 h-12 rounded-full shadow-inner flex items-center justify-between px-2"
+                  style={{
+                    backgroundColor: isToggled ? '#4ade80' : '#9ca3af'
+                  }}
+                >
+                  <span className="text-xs text-white font-bold">OFF</span>
+                  <span className="text-xs text-white font-bold">ON</span>
+                </div>
+                <div
+                  className="toggle__dot absolute w-16 h-12 top-0 bg-white rounded-full shadow left-0 flex items-center justify-center text-gray-900 font-bold"
+                  style={{
+                    transform: isToggled ? 'translateX(64px)' : 'translateX(0)'
+                  }}
+                >
+                  <span>{isToggled ? 'ON' : 'OFF'}</span>
+                </div>
+              </div>
+              <div className="ml-4 text-gray-200 font-medium text-lg">
+                {isToggled ? (
+                  <p className="text-green-100">Custom edit enabled</p>
+                ) : (
+                  'Custom edit disabled'
+                )}
+              </div>
+             
+            </label>
+            {
+                !isToggled || <p className='text-green-600 mt-5'>  You can directly edit your resume by clicking and Dowload the Updated Resume. These changes are temporary. </p>
+              }
+
+
+          </div>
         );
       case 'ats-keywords':
         return (
           <div className="space-y-4">
-             <button onClick={HandelAtsScore} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
-               ATS Keyword
+            <button onClick={HandelAtsScore} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90">
+              ATS Keyword
             </button>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-gray-700 rounded-lg">
@@ -285,9 +327,9 @@ export default function ResumeCreateHeader() {
                 <div className="flex flex-wrap gap-2">
                   {atsData.missing?.map((kw, i) => (
                     <span key={i} className="px-2 py-1 flex bg-red-700/30 rounded text-sm">
-                      {kw} <FcPlus 
-                            onClick={(e)=>handelAddSkills(kw)}
-                            className=' text-2xl ml-2 shadow-xl hover:scale-110'/>
+                      {kw} <FcPlus
+                        onClick={(e) => handelAddSkills(kw)}
+                        className=' text-2xl ml-2 shadow-xl hover:scale-110' />
                     </span>
                   ))}
                 </div>
@@ -300,20 +342,21 @@ export default function ResumeCreateHeader() {
     }
   };
 
- 
-  const handelAddSkills=(kw)=>{
-   
-      addSkill('technical', kw);
-      setAtsData(prev => ({
-        ...prev,
-        missing: prev.missing.filter(value => value !== kw)
-      }));
-    
+
+  const handelAddSkills = (kw) => {
+
+    addSkill('technical', kw);
+    setAtsData(prev => ({
+      ...prev,
+      missing: prev.missing.filter(value => value !== kw)
+    }));
+
   };
+
 
   return (
     <div className="w-full  p-3 pb-0 animate-fade-in bg-gray-900">
-  <div className="rounded shadow-lg p-4 items-center content-center animate-slide-up bg-gray-800">
+      <div className="rounded shadow-lg p-4 items-center content-center animate-slide-up bg-gray-800">
         <div className="flex items-center justify-between ">
           <div className="flex items-center ml-3 gap-3">
             <FileText className="w-8 h-10 text-[#0ef]" />
@@ -322,18 +365,17 @@ export default function ResumeCreateHeader() {
             </h2>
           </div>
           <div className="flex gap-4">
-            {['description', 'ats-score', 'custom edit','ai-enhancement', 'ats-keywords'].map((tab) => (
-              <button 
+            {['description', 'ats-score', 'custom edit', 'ai-enhancement', 'ats-keywords'].map((tab) => (
+              <button
                 key={tab}
                 onClick={() => {
                   setActiveTab(tab);
                   setIsBoxOpen(true);
                 }}
-                className={`px-4 py-2 rounded transition-all ${
-                  activeTab === tab 
+                className={`px-4 py-2 rounded transition-all ${activeTab === tab
                     ? 'bg-blue-600 text-white rounded'
                     : 'text-gray-300 hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 {tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
               </button>
@@ -347,7 +389,7 @@ export default function ResumeCreateHeader() {
               <h3 className="text-lg font-semibold text-white">
                 {activeTab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
               </h3>
-              <button 
+              <button
                 onClick={() => setIsBoxOpen(false)}
                 className="text-gray-400 hover:text-gray-300"
               >

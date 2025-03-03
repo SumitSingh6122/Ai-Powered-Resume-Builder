@@ -4,7 +4,7 @@ import { useResumeStore } from "../../Store/useResumeStore";
 
 
 export  function MinimalTemplate() {
-  // Accessing the resume data from the store
+  
  const { 
     personalInfo = {}, 
     summary = '', 
