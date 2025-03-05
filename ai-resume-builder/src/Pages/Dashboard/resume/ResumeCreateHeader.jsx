@@ -18,16 +18,13 @@ export default function ResumeCreateHeader() {
   const [error, setError] = useState('');
 
   const { personalInfo, position, level, addSkill, summary, experience, education, projects, certifications, skills } = useResumeStore();
-
+  const { isToggled, setIsToggled } = useResumeStore();
   const parseAIResponse = (rawData) => {
     try {
-      const cleanedData = rawData
-        .replace(/```json/g, '')
-        .replace(/```/g, '')
-        .trim();
+      const cleanedData = rawData.replace(/```json/g, '').replace(/```/g, '').trim();
       return JSON.parse(cleanedData);
     } catch (e) {
-      console.error("Failed to parse AI response:", e);
+      console.error("Parsing failed:", e);
       setError("Failed to process AI response. Please try again.");
       return null;
     }
@@ -37,65 +34,88 @@ export default function ResumeCreateHeader() {
     setLoading(true);
     setError('');
     setEnhancementResults(null);
-
+  
     try {
       const currentState = useResumeStore.getState();
-
-      const prompt = `Analyze and enhance this resume for a ${currentState.position} position (${currentState.level} level). 
-      Respond with JSON containing:
+      const hasJobDescription = jobDescription.trim().length > 0;
+  
+      const prompt = `Analyze and enhance this resume for ${currentState.position} (${currentState.level} level)
+      ${hasJobDescription ? `using this job description: "${jobDescription.replace(/"/g, "'")}"` : ''}.
+      
+      Return STRICT JSON with:
       {
-        "summary": "improved summary",
-        "experience": [{"index": 0, "description": "enhanced description"}],
-        "skills": {"technical": [], "soft": []},
-        "projects": [{"index": 0, "description": "improved project"}],
-        "suggestions": ["list of improvement suggestions"],
-        "optimizations": ["ATS optimizations"]
-      }     
-      DO NOT include any text outside the JSON format. 
-      DO NOT use markdown syntax. 
-      Do NOT give example give it only valid result.
-      DO NOT add explanations.  
-      `;
-
+        "summary": {
+          "original": "<current>",
+          "enhanced": "<job-targeted profile>",
+          "keywords": ["JD-matched terms"]
+        },
+        "experience": [{
+          "index": 0,
+          "original": "<text>",
+          "enhanced": "<JD-aligned STAR statements>",
+          "relevance": "<job requirement match>"
+        }],
+        "skills": {
+          "technical": ["JD-specific technologies"],
+          "soft": ["JD-mentioned competencies"]
+        },
+        "jobAlignment": {
+          "matchedKeywords": ["list"],
+          "missingKeywords": ["list"],
+          "score": 0-100
+        },
+        "suggestions": ["JD-focused improvements"]
+      }
+  
+      STRICT RULES:
+      - Prioritize skills from JD: ${hasJobDescription ? 'Required' : 'N/A'}
+      - Mirror job description language patterns
+      - Highlight ${hasJobDescription ? 'JD-specific' : 'general'} achievements
+      - Validate JSON structure
+      -  DO NOT include any text outside the JSON format. 
+      - DO NOT add explanations.  `;
+  
       const result = await AichatSession.sendMessage(prompt);
       const rawData = await result.response.text();
       const enhancements = parseAIResponse(rawData);
-
+      console.log(rawData);
+  
       if (!enhancements) return;
-
-      // Update store
+  
+      // Update store with JD-specific enhancements
       useResumeStore.setState(state => ({
-        summary: enhancements.summary || state.summary,
-        skills: enhancements.skills ? {
-          technical: [...new Set([...state.skills.technical, ...enhancements.skills.technical])],
-          soft: [...new Set([...state.skills.soft, ...enhancements.skills.soft])]
-        } : state.skills,
-        experience: enhancements.experience
-          ? state.experience.map((e, i) =>
-            enhancements.experience.find(enh => enh.index === i)
-              ? { ...e, description: enhancements.experience.find(enh => enh.index === i).description }
-              : e
-          )
-          : state.experience,
-        projects: enhancements.projects
-          ? state.projects.map((p, i) =>
-            enhancements.projects.find(proj => proj.index === i)
-              ? { ...p, description: enhancements.projects.find(proj => proj.index === i).description }
-              : p
-          )
-          : state.projects
+        summary: enhancements.summary?.enhanced || state.summary,
+        skills: {
+          technical: [
+            ...new Set([
+              ...(enhancements.skills?.technical || []),
+              ...state.skills.technical
+            ])
+          ].sort(a => enhancements.skills?.technical.includes(a) ? -1 : 1),
+          soft: [
+            ...new Set([
+              ...(enhancements.skills?.soft || []),
+              ...state.skills.soft
+            ])
+          ]
+        },
+        experience: enhancements.experience?.reduce((acc, exp) => {
+          if (acc[exp.index]) {
+            acc[exp.index].description = exp.enhanced;
+          }
+          return acc;
+        }, [...state.experience]) || state.experience
       }));
-
-      // Store enhancement results for display
+  
       setEnhancementResults({
-        suggestions: enhancements.suggestions,
-        keywords: enhancements.keywords,
-        optimizations: enhancements.optimizations
+        suggestions: enhancements.suggestions || [],
+        jobAlignment: enhancements.jobAlignment || {},
+        keywords: enhancements.summary?.keywords || []
       });
-
+  
     } catch (error) {
-      console.error("AI enhancement failed:", error);
-      setError("AI enhancement failed. Please try again.");
+      console.error("JD enhancement failed:", error);
+      setError("Job-specific enhancement failed. Please check the job description format.");
     } finally {
       setLoading(false);
     }
@@ -105,8 +125,8 @@ export default function ResumeCreateHeader() {
   const HandelAtsScore = async () => {
     setLoading(true);
     setError('');
-
-    const prompt = `Calculate ATS compatibility score (0-100) for this resume applying to ${position}.
+    const hasJobDescription = jobDescription.trim().length > 0;
+    const prompt = `Calculate ATS compatibility score (0-100) for this resume applying to ${position} ans ${hasJobDescription ? `using this job description: "${jobDescription.replace(/"/g, "'")}"` : ''}.
     Job Description: ${jobDescription}
     Resume Data: ${JSON.stringify({
       skills,
@@ -195,27 +215,46 @@ export default function ResumeCreateHeader() {
         onClick={HandleResumeEnhancement}
         className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded hover:opacity-90"
       >
-        AI Enhancement
+        {jobDescription ? 'Job-Targeted Enhancement' : 'Enhance Resume'}
       </button>
-
+  
       {enhancementResults && (
         <div className="mt-4 space-y-4">
+          {enhancementResults.jobAlignment?.score && (
+            <div className="p-4 bg-gray-700 rounded-lg">
+              <h4 className="text-green-400 mb-2">
+                Job Match Score: {enhancementResults.jobAlignment.score}/100
+              </h4>
+              <div className="grid grid-cols-2 gap-4 mt-3">
+                <div>
+                  <h5 className="text-blue-300 text-sm">Matched Keywords</h5>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {enhancementResults.jobAlignment.matchedKeywords?.map((kw, i) => (
+                      <span key={i} className="px-2 py-1 bg-green-700/30 rounded text-xs">
+                        {kw}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h5 className="text-red-300 text-sm">Missing Keywords</h5>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {enhancementResults.jobAlignment.missingKeywords?.map((kw, i) => (
+                      <span key={i} className="px-2 py-1 bg-red-700/30 rounded text-xs">
+                        {kw}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+  
           <div className="p-4 bg-gray-700 rounded-lg">
-            <h4 className="text-blue-400 mb-2">Key Suggestions</h4>
+            <h4 className="text-yellow-400 mb-2">Optimization Suggestions</h4>
             <ul className="list-disc pl-4 space-y-2">
-              {enhancementResults.suggestions?.map((s, i) => (
+              {enhancementResults.suggestions.map((s, i) => (
                 <li key={i} className="text-gray-300 text-sm">{s}</li>
-              ))}
-            </ul>
-          </div>
-
-
-
-          <div className="p-4 bg-gray-700 rounded-lg">
-            <h4 className="text-yellow-400 mb-2">Optimizations</h4>
-            <ul className="list-disc pl-4 space-y-2">
-              {enhancementResults.optimizations?.map((opt, i) => (
-                <li key={i} className="text-gray-300 text-sm">{opt}</li>
               ))}
             </ul>
           </div>
@@ -225,7 +264,7 @@ export default function ResumeCreateHeader() {
   );
 
 
-  const [isToggled, setIsToggled] = useState(false);
+  
 
 
   const renderContent = () => {
@@ -259,9 +298,6 @@ export default function ResumeCreateHeader() {
       case 'custom edit':
         return (
           <div >
-
-
-
             <label className="flex items-center cursor-pointer mb-6">
               <div className="relative">
                 <input

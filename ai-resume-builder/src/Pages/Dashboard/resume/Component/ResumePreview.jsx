@@ -1,4 +1,4 @@
-import { ResumeInfoContext } from "@/Pages/Context/ResumeInfoContext";
+
 import React, { useContext, useState } from "react";
 import { ModernTemplate } from "@/Pages/ResumetemplateSection/Template/Template4";
 import { CreativeTemplate } from "@/Pages/ResumetemplateSection/Template/Template1";
@@ -21,8 +21,8 @@ import { RWebShare } from "react-web-share";
 import { Template5, Template6, Template7 } from "@/Pages/ResumetemplateSection/Template/Template5";
 
 const ResumePreview = ({EditPage}) => {
-  const { resumeInfo } = useContext(ResumeInfoContext);
-  const {personalInfo,position,level, summary, experience,education,Resumetitle , projects,certifications,skills} =useResumeStore();
+
+  const {personalInfo,position,level, summary, experience,education,Resumetitle ,isToggled, projects,certifications,skills} =useResumeStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [templatestoreview, settemplatestoreview] = useState(false);
   const [DowloadEnable,setDowloadEnable]=useState(false);
@@ -49,7 +49,7 @@ const ResumePreview = ({EditPage}) => {
    const res= await axios.put(`http://localhost:3001/api/v1/resume/${resumeId}`,{resumeData},{
     withCredentials:true,
    })
-   console.log(res);
+   
    toast.success(res.data.message);
      } catch (error) {
       console.log(error);
@@ -79,19 +79,61 @@ const ResumePreview = ({EditPage}) => {
   }
   }
   const handleDownloadPDF = async () => {
-   
-  const input = document.getElementById("resume-preview");
-     if (!input) return;
-
-     const canvas = await html2canvas(input, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-     pdf.save("resume.pdf"); 
+    try {
+      const input = document.getElementById("resume-preview");
+      if (!input) return;
+  
+      // Clone the element to modify without affecting DOM
+      const clone = input.cloneNode(true);
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      document.body.appendChild(clone);
+  
+     
+      const elementsToRemove = clone.querySelectorAll('.header-section, .page-break');
+      elementsToRemove.forEach(el => el.remove());
+  
+      const scale = 3;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+  
+      const canvas = await html2canvas(clone, {
+        scale,
+        useCORS: true,
+        windowHeight: clone.scrollHeight
+      });
+  
+    
+      document.body.removeChild(clone);
+  
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+      // Split content with first page offset
+      let heightLeft = imgHeight;
+      let position = 0;
+  
+      // First page (skip header)
+      pdf.addImage(canvas, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+  
+      // Subsequent pages
+      while (heightLeft >= 0) {
+        pdf.addPage();
+        position = heightLeft - imgHeight;
+        pdf.addImage(canvas, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+  
+      pdf.save(`${Resumetitle || "resume"}.pdf`);
+  
+    } catch (error) {
+      console.error("PDF error:", error);
+      toast.error("Download failed");
+    } finally {
+      setDowloadEnable(true);
+    }
   };
 
   return (
@@ -151,8 +193,8 @@ const ResumePreview = ({EditPage}) => {
         </div>
         <div
           id="resume-preview"
-          contentEditable={true}
-          className="h-[880px] scrollbar-hideee overflow-y-auto"
+          contentEditable={isToggled}
+          className="h-[880px] "
         >
           {React.createElement(templates[ResumeTemplateId])}
         </div>

@@ -1,106 +1,93 @@
-import { X } from 'lucide-react'
-import React, { useState } from 'react'
-
+import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TemplateSection } from '../TemplateSection';
-import { FaSearch } from 'react-icons/fa';
 import { CiSearch } from 'react-icons/ci';
-import { Height } from '@mui/icons-material';
 
+const TemplateStore = ({ isOpen, onClose }) => {
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('All');
+  const [filteredTemplates, setFilteredTemplates] = useState([]);
 
+  const templates = [
+    { id: '1', name: 'Modern Professional', description: 'Clean and contemporary design with a focus on readability', category: 'Fresher', preview: '/TemplateImage/template1.png' },
+    { id: '2', name: 'Creative Portfolio', description: 'Stand out with a unique layout perfect for creative roles', category: 'Fresher', preview: '/TemplateImage/template2.png' },
+    { id: '3', name: 'Executive Suite', description: 'Professional template ideal for senior positions', category: 'Experience', preview: '/TemplateImage/template3.png' },
+    { id: '4', name: 'Minimal Classic', description: 'Traditional layout with a modern minimal twist', category: 'Fresher', preview: '/TemplateImage/template4.png' },
+    { id: '5', name: 'Corporate Elite', description: 'A refined template for experienced professionals', category: 'Experience', preview: '/TemplateImage/template5.png' },
+    { id: '6', name: 'Startup Founder', description: 'Sleek and modern for business leaders', category: 'Experience', preview: '/TemplateImage/template6.png' },
+  ];
 
+  useEffect(() => {
+    const filtered = templates.filter((item) =>
+      (category === 'All' || item.category === category) &&
+      item.name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredTemplates(filtered);
+  }, [search, category]);
 
-
-const TemplateStore = ({isOpen,onClose}) => {
-
-  
-    
-    const templates = [
-        {
-          id: '1',
-          name: 'Modern Professional',
-          description: 'Clean and contemporary design with a focus on readability',
-          popular: true,
-          preview: '/TemplateImage/template1.png'
-        },
-        {
-          id: '2',
-          name: 'Creative Portfolio',
-          description: 'Stand out with a unique layout perfect for creative roles',
-          preview: '/TemplateImage/template2.png'
-        },
-        {
-          id: '3',
-          name: 'Executive Suite',
-          
-          description: 'Professional template ideal for senior positions',
-          preview: '/TemplateImage/template3.png'
-        },
-        {
-          id: '4',
-          name: 'Minimal Classic',
-          description: 'Traditional layout with a modern minimal twist',
-          preview: '/TemplateImage/template4.png'
-        },
-        {
-          id: '5',
-          name: 'Classical professional',
-          description: 'Traditional layout with a modern minimal twist',
-          preview: '/TemplateImage/template5.png'
-        },
-        {
-          id: '6',
-          name: 'Classical professional',
-          description: 'Traditional layout with a modern minimal twist',
-          preview: '/TemplateImage/template6.png'
-        },
-        {
-          id: '7',
-          name: 'Classical professional',
-          description: 'Traditional layout with a modern minimal twist',
-          preview: '/TemplateImage/template7.png'
-        }
-      ];
-      
-      const container = {
-        hidden: { opacity: 0 },
-        show: {
-          opacity: 1,
-          transition: {
-            staggerChildren: 0.1
-          }
-        }
-      };
   return (
-    <AnimatePresence className='z-50' >
-    { isOpen &&
-    <div onClick={onClose} className='bg-gray-800 h-[90vh] top-10 left-20 w-[90vw] z-50 fixed overflow-auto'>
- <div  className='h-full   m-5   '>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-gray-800/50 bg-opacity-90 z-50 flex justify-center items-center">
+          <div className="bg-gray-800 w-[95vw] h-[99vh] absolute top-10 rounded-lg shadow-lg flex flex-col">
+            
+            {/* Header & Filters */}
+            <div className="p-5 flex justify-between items-center bg-gray-800/50 pt-10 sticky top-0 z-10">
+              <h2 className="text-[1.5rem] text-white">Select Resume</h2>
+              
+              {/* Search Bar */}
+              <div className="flex items-center bg-gray-700/50 rounded px-3 py-2 w-1/3">
+                <input
+                  type="text"
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full text-white outline-none bg-transparent"
+                  placeholder="Search here..."
+                />
+                <CiSearch className="text-white  text-2xl" />
+              </div>
 
-    <div className='flex items-center content-around relative'>  
-        <h2 className='text-[1.5rem] text-white ml-4 '>Select Resume</h2>
-        <div className='w-[60vw] h-[45px] bg-white rounded ml-[10vw] mt-5 relative '><input type="text" className='w-[40vw] outline-none bg-transparent absolute py-3 px-5 ' placeholder='search here ' />
-        <button onClick={onClose}  className='absolute right-5  '><CiSearch className='text-2xl mt-2' /></button></div>
-        <span onClick={onClose} className='absolute right-2 top-2 font-semibold  ' ><X  className='h-10 w-7 '/></span>   
-    </div>
-    <div className='mt-10 '><h1 className='text-white '>Top Rated Resume</h1>
-    <hr className='mt-1 text-2xl' /></div>
-    <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="mt-5 grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          {templates.map((template) => (
-            <TemplateSection key={template.id} {...template}   />
-          ))}
-        </motion.div>
- </div>
-    </div>
-        }
-        </AnimatePresence>
-  )
-}
+            
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="bg-gray-700/50 px-3 py-2 rounded outline-none text-white"
+              >
+                <option value="All">All</option>
+                <option value="Fresher">Fresher</option>
+                <option value="Experience">Experience</option>
+              </select>
+
+             
+              <button onClick={onClose}>
+                <X className="h-7 w-7 text-white" />
+              </button>
+            </div>
+
+           
+            <div className="flex-1 overflow-y-auto p-5">
+              <h1 className="text-white text-lg">Top Rated Resume</h1>
+              <hr className="my-3" />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ staggerChildren: 0.1 }}
+                className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4"
+              >
+                {filteredTemplates.length > 0 ? (
+                  filteredTemplates.map((template) => (
+                    <TemplateSection key={template.id} {...template} />
+                  ))
+                ) : (
+                  <p className="text-white text-center col-span-3">No templates found.</p>
+                )}
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 export default TemplateStore;

@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ClearUser } from '@/redux/AuthSlice';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
+import TemplateStore from './ResumetemplateSection/Template/TemplateStore';
 
 
 
@@ -24,12 +25,14 @@ import Cookies from 'js-cookie';
 function Header() {
   const navigate=useNavigate();
   const { isAuthenticated } = useSelector((store) => store.auth);
+   const [templatestoreview, settemplatestoreview] = useState(false);
 const handelGetStarted=()=>{
   if(!isAuthenticated) return navigate('/auth/sign-in');
   navigate('/dashboard');
 }
 
   return (
+    <>
     <header className='header  bg-gradient-to-tr from-[#1f242d] to-[#122143] '>
       <div className='p-3 px-5 content-center flex justify-between shadow-md logo'>
         <div className='flex justify-center content-center'>
@@ -39,7 +42,7 @@ const handelGetStarted=()=>{
         <div className="nav  text-white pt-2 flex-col">
           <a className='nav-link' href='/'>Home</a>
           <a className='nav-link' href='#features'>Feature</a>
-          <a className='nav-link' href='#template'>Template</a>
+          <a className='nav-link' onClick={() => settemplatestoreview(true)}>Template</a>
           {isAuthenticated &&
             <a className='nav-link' href='/dashboard'>Dashboard</a>}
 
@@ -57,6 +60,11 @@ const handelGetStarted=()=>{
         </div>
       </div>
     </header>
+    <TemplateStore
+        isOpen={templatestoreview}
+        onClose={() => settemplatestoreview(false)}
+      />
+    </>
   );
 }
 

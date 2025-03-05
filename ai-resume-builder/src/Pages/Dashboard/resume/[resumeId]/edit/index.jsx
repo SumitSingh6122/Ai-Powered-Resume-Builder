@@ -16,7 +16,7 @@ import { useResumeStore } from '@/Pages/Store/useResumeStore';
 
 const EditResume = () => {
   const {setResumeData}=useResumeStore();
-  const [resumeInfo, setResumeInfo] = useState(null);
+  
   
   const params = useParams();
   const ResumeData = useSelector((store) => store.ResumeState.resume);
@@ -29,7 +29,7 @@ const EditResume = () => {
     }
   }, [ResumeData, setResumeData]);
   return (
-    <ResumeInfoContext.Provider value={{ resumeInfo, setResumeInfo }}>
+   
       <div className='bg-gray-900 min-h-full text-black  overflow-x-hidden'>
       <ResumeCreateHeader/>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-10 pt-5 p-10 '>
@@ -44,7 +44,7 @@ const EditResume = () => {
           <MessageToast message='Help us craft a standout resume by providing the Job Description!' />
 
         </div></div>
-    </ResumeInfoContext.Provider>
+   
   )
 }
 

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-// Define the Zustand store
+
 export const useResumeStore = create((set) => {
   const addDummyData = () => ({
     personalInfo: {
@@ -20,7 +20,7 @@ export const useResumeStore = create((set) => {
         },
     
     },
-    Resumetitle:'Full stack',
+    Resumetitle:'Full stact',
     experiencelevel:false,
     position:'Full stack developer',
     level:"fresher",
@@ -89,7 +89,8 @@ export const useResumeStore = create((set) => {
 
   return {
     ...addDummyData(), 
-
+    isToggled: false,
+    setIsToggled: (value) => set({ isToggled: value }),
     
     addDummyData: () => set(addDummyData),
     setResumeData: (newResumeData) => set(() => newResumeData),

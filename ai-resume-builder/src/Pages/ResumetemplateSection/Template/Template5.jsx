@@ -23,7 +23,7 @@ export function Template5(){
       {/* Left Sidebar */}
       <div className="w-1/3 bg-blue-900 text-white p-6">
         <div className="flex flex-col items-center mb-8">
-          <img src={personalInfo.profileImageUr} 
+          <img src={personalInfo.profileImageUrl} 
                alt="Profile" 
                className="rounded-full mb-4" 
                width="100" 
@@ -98,8 +98,8 @@ export function Template5(){
       <div className="w-2/3 p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-blue-900">{personalInfo.name}</h1>
-          <h2 className="text-xl text-gray-600">{position}</h2>
-          <p className="mt-2 text-gray-500">{Resumetitle}</p>
+          <h2 className="text-xl text-gray-600">{position || "SoftWare Developer"}</h2>
+         
         </div>
 
         <div className="mb-8">
@@ -155,7 +155,7 @@ export function Template5(){
 
 
 export function Template6(){
-  const resume = useResumeStore();
+  
   const {
     personalInfo,
     Resumetitle,
