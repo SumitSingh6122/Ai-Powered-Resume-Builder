@@ -1,6 +1,11 @@
 import { useResumeStore } from "@/Pages/Store/useResumeStore";
-import { Award } from "lucide-react";
+import { Email, LocalActivity, LocationCity } from "@mui/icons-material";
+import { Award, Link, LocateIcon, LucideExternalLink, Phone } from "lucide-react";
 import React from "react";
+import { FaLocationArrow, FaSearchLocation } from "react-icons/fa";
+import { IoLocateSharp, IoLocationSharp } from "react-icons/io5";
+
+
 
 
 export function Template5(){
@@ -320,7 +325,125 @@ export function Template7(){
   );
 };
 
-const Templates = { Template5, Template6, Template7 };
+
+
+
+export function Template8() {
+  const {
+    personalInfo,
+    summary,
+    education,
+    projects,
+    skills,
+    position,
+    certifications
+  } = useResumeStore();
+
+  return (
+    <div className="bg-white text-black font-sans max-w-4xl mx-auto p-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold">{personalInfo.name}</h1>
+        <p className="text-lg">
+          {position} 
+        </p>
+        <div className="flex justify-center space-x-4 mt-2">
+          <a className="text-blue-500 flex" href={`mailto:${personalInfo.email}`}>
+           <Email size={16} className="mr-1 mt-1" /> {personalInfo.email}
+          </a>
+          <a className="text-blue-500   flex" href={`tel:${personalInfo.phone}`}>
+            <Phone size={16} className="mt-1 mr-1"/> {personalInfo.phone}
+          </a>
+          <a className="text-blue-500 flex">
+            <IoLocationSharp size={16} className="mt-1 mr-1" /> {personalInfo.location}
+          </a>
+          <a className="text-blue-500 flex" href={personalInfo.portfolio.link}>
+            <Link size={16} className="mt-1 mr-1" /> {personalInfo.portfolio.text}
+          </a>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-xl font-bold text-blue-500">SUMMARY</h2>
+        <div className="border-t border-gray-300 mt-2"></div>
+        <div className="mt-4">
+          <p>{summary}</p>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-xl font-bold text-blue-500">EDUCATION</h2>
+        <div className="border-t border-gray-300 mt-2"></div>
+        {education.map((edu, index) => (
+          <div key={index} className="mt-4">
+            <div className="flex justify-between">   <h3 className="font-bold">{edu.school}</h3>
+            {edu.graduationDate && (
+              <p className="text-gray-600 ">{edu.graduationDate}</p>
+            )}
+            </div>
+            <p className="italic">{edu.degree} - {edu.field}</p>
+            
+            {edu.achievements && (
+              <p className="mt-1">{edu.achievements}</p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-xl font-bold text-blue-500">PROJECTS</h2>
+        <div className="border-t border-gray-300 mt-2"></div>
+        {projects.map((project, index) => (
+          <div key={index} className="mt-4">
+            <h3 className="font-bold flex items-center">
+              {project.title}
+              {project.link && (
+                <a className="text-blue-500 ml-1" href={project.link}>
+                  <LucideExternalLink size={16} />
+                </a>
+              )}
+            </h3>
+            <ul className="list-disc list-inside mt-2 space-y-1" dangerouslySetInnerHTML={{__html:project.description}}>
+             </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-xl font-bold text-blue-500">SKILLS</h2>
+        <div className="border-t border-gray-300 mt-2"></div>
+        <ul className="list-disc list-inside mt-4 space-y-1">
+          {skills.technical?.length > 0 && (
+            <li>
+              <span className="font-bold text-black">Technical:</span>{' '}
+              {skills.technical?.join(', ')}
+            </li>
+          )}
+          {skills.soft?.length > 0 && (
+            <li>
+              <span className="font-bold text-black">Soft:</span>{' '}
+              {skills.soft.join(', ')}
+            </li>
+          )}
+        </ul>
+      </div>
+  {certifications && 
+  <div className="mt-6">
+  <h2 className="text-xl font-bold text-blue-500">ACHIEVEMENTS</h2>
+  <div className="border-t border-gray-300 mt-2"></div>
+  <div className="list-disc list-inside mt-4 space-y-1">
+    {certifications.map((edu, index) =>
+      edu.name ? (
+        <div key={index} className="flex justify-between"><h3>• {edu.name}</h3> <p>{edu.date}</p>  </div>
+      ) : null
+    )}
+  </div>
+</div> }
+      
+    </div>
+  );
+}
+
+const Templates = { Template5, Template6, Template7 ,Template8};
 export default Templates;
 
 

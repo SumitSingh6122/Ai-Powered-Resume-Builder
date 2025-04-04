@@ -131,7 +131,6 @@ export default function EducationDetail() {
                   styles={customStyles}
                   placeholder="Start Date"
                 />
-            
               </div>
 
               <div className="md:col-span-2">

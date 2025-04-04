@@ -10,12 +10,14 @@ const TemplateStore = ({ isOpen, onClose }) => {
   const [filteredTemplates, setFilteredTemplates] = useState([]);
 
   const templates = [
-    { id: '1', name: 'Modern Professional', description: 'Clean and contemporary design with a focus on readability', category: 'Fresher', preview: '/TemplateImage/template1.png' },
-    { id: '2', name: 'Creative Portfolio', description: 'Stand out with a unique layout perfect for creative roles', category: 'Fresher', preview: '/TemplateImage/template2.png' },
+    { id: '1', name: 'Modern Professional', description: 'Clean and contemporary design with a focus on readability', category: 'Experience', preview: '/TemplateImage/template1.png' },
+    { id: '2', name: 'Creative Portfolio', description: 'Stand out with a unique layout perfect for creative roles', category: 'Experience', preview: '/TemplateImage/template2.png' },
     { id: '3', name: 'Executive Suite', description: 'Professional template ideal for senior positions', category: 'Experience', preview: '/TemplateImage/template3.png' },
-    { id: '4', name: 'Minimal Classic', description: 'Traditional layout with a modern minimal twist', category: 'Fresher', preview: '/TemplateImage/template4.png' },
+    { id: '4', name: 'Minimal Classic', description: 'Traditional layout with a modern minimal twist', category: 'Experience', preview: '/TemplateImage/template4.png' },
     { id: '5', name: 'Corporate Elite', description: 'A refined template for experienced professionals', category: 'Experience', preview: '/TemplateImage/template5.png' },
     { id: '6', name: 'Startup Founder', description: 'Sleek and modern for business leaders', category: 'Experience', preview: '/TemplateImage/template6.png' },
+    {id: '7', name: 'Startup Founder', description: 'Sleek and modern for business leaders', category: 'Experience', preview: '/TemplateImage/template7.png'},
+    {id: '8', name: 'Startup Founder', description: 'Sleek and modern for business leaders', category: 'Fresher', preview: '/TemplateImage/template6.png'},
   ];
 
   useEffect(() => {
@@ -65,13 +67,15 @@ const TemplateStore = ({ isOpen, onClose }) => {
             </div>
 
            
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="flex-1 overflow-y-auto p-5 "   
+            >
               <h1 className="text-white text-lg">Top Rated Resume</h1>
               <hr className="my-3" />
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ staggerChildren: 0.1 }}
+                
                 className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4"
               >
                 {filteredTemplates.length > 0 ? (

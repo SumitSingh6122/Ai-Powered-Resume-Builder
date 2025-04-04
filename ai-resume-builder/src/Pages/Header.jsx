@@ -144,7 +144,7 @@ export const AvatarMenu = () => {
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
-          <ListItemIcon>
+          <ListItemIcon >
             <PersonAdd fontSize="small" />
           </ListItemIcon>
           Add another account

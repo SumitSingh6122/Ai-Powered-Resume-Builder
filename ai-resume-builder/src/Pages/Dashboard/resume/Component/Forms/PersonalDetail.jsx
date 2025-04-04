@@ -200,7 +200,7 @@ const PersonalDetail = () => {
             </Label>
             <Input
               id="link"
-              value={personalInfo.portfolio.link}
+              value={personalInfo.portfolio.link || "https://"}
               onChange={(e)=>{updatePersonalInfo({
                 portfolio:{...personalInfo.portfolio,link:e.target.value},
               });
@@ -246,7 +246,7 @@ const PersonalDetail = () => {
             </Label>
             <Input
               id="link"
-              value={personalInfo.linkedin?.link}
+              value={personalInfo.linkedin?.link || "https://"}
               onChange={(e)=>{updatePersonalInfo({
                 linkedin:{...personalInfo.linkedin,link:e.target.value},
               });
@@ -294,7 +294,7 @@ const PersonalDetail = () => {
               Link
             </Label>
             <Input
-            value={personalInfo.GithubUrl.link}
+            value={personalInfo.GithubUrl.link || "https://"}
               id="link"
               onChange={(e)=>{updatePersonalInfo({
                 github:{...personalInfo.GithubUrl,link:e.target.value},

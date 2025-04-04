@@ -13,7 +13,7 @@ export function ModernTemplate() {
     certifications = [] ,
     experiencelevel,
   } = useResumeStore();
-console.log(experiencelevel);
+
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white text-gray-800">
       <header className="border-b-2 border-blue-600 pb-6">
@@ -66,7 +66,7 @@ console.log(experiencelevel);
   </h3>
   <div className="mt-3 space-y-6">
     {projects.length ? (
-       <div className="grid grid-cols-2 gap-4">
+       <div className="flex-1  gap-4">
        {projects?.map((project) => (
          <div key={project.title}>
           <div className='flex '>    <h2 className="font-medium text-gray-900">{project.title}</h2>     <span className="flex items-center absolute right-8 text-sm">
@@ -157,7 +157,7 @@ console.log(experiencelevel);
 
       <section className="mt-8">
         <h3 className="text-lg font-bold text-gray-900 mb-3">Certifications</h3>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex-1 flex-wrap gap-4">
           {certifications.length ? (
             certifications.map((cert, index) => (
               <div

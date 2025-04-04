@@ -127,8 +127,8 @@ const Footer = () => {
                 href: "https://github.com/SumitSingh6122",
               },
             ].map((item, index) => (
-              <li key={index} className=" z-50">
-                <a href={item.href} target="_blank" rel="noopener noreferrer" >
+              <li key={index} className=" z-50 relative">
+                <a href={item?.href} target="_blank" rel="noopener noreferrer" >
                 <div  className={`${iconStyles} hover:text-[#0ef] hover:bg-transparent`}>{item.icon}</div>
 
                 </a>

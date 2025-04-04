@@ -18,7 +18,7 @@ import { FaShare } from "react-icons/fa";
 import { Update } from "@mui/icons-material";
 import { FcInspection } from "react-icons/fc";
 import { RWebShare } from "react-web-share";
-import { Template5, Template6, Template7 } from "@/Pages/ResumetemplateSection/Template/Template5";
+import { Template5, Template6, Template7, Template8 } from "@/Pages/ResumetemplateSection/Template/Template5";
 
 const ResumePreview = ({EditPage}) => {
 
@@ -40,16 +40,18 @@ const ResumePreview = ({EditPage}) => {
     4: MinimalTemplate,
     5:Template5,
     6:Template6,
-    7:Template7
+    7:Template7,
+    8:Template8
+    
   };
   const HandelEditResume=async()=>{
      try {
       isSave(true);
   const resumeData={personalInfo,position,summary,level,experience,education,projects,certifications,skills,Resumetitle,ResumeTemplateId};
-   const res= await axios.put(`http://localhost:3001/api/v1/resume/${resumeId}`,{resumeData},{
+   const res= await axios.put(`http://localhost:3000/api/v1/resume/${resumeId}`,{resumeData},{
     withCredentials:true,
    })
-   
+   console.log(res);
    toast.success(res.data.message);
      } catch (error) {
       console.log(error);
@@ -78,63 +80,19 @@ const ResumePreview = ({EditPage}) => {
     setDowloadEnable(true);
   }
   }
-  const handleDownloadPDF = async () => {
-    try {
-      const input = document.getElementById("resume-preview");
-      if (!input) return;
+  const handleDownloadPDF = () => {
+    const resumeElement = document.getElementById("resume-preview");
   
-      // Clone the element to modify without affecting DOM
-      const clone = input.cloneNode(true);
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
-      document.body.appendChild(clone);
+    if (!resumeElement) return;
   
-     
-      const elementsToRemove = clone.querySelectorAll('.header-section, .page-break');
-      elementsToRemove.forEach(el => el.remove());
+    const originalContent = document.body.innerHTML; 
+    document.body.innerHTML = resumeElement.outerHTML; 
   
-      const scale = 3;
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
+    window.print(); // Open print dialog
   
-      const canvas = await html2canvas(clone, {
-        scale,
-        useCORS: true,
-        windowHeight: clone.scrollHeight
-      });
-  
-    
-      document.body.removeChild(clone);
-  
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  
-      // Split content with first page offset
-      let heightLeft = imgHeight;
-      let position = 0;
-  
-      // First page (skip header)
-      pdf.addImage(canvas, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-  
-      // Subsequent pages
-      while (heightLeft >= 0) {
-        pdf.addPage();
-        position = heightLeft - imgHeight;
-        pdf.addImage(canvas, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-  
-      pdf.save(`${Resumetitle || "resume"}.pdf`);
-  
-    } catch (error) {
-      console.error("PDF error:", error);
-      toast.error("Download failed");
-    } finally {
-      setDowloadEnable(true);
-    }
+    document.body.innerHTML = originalContent; 
   };
+  
 
   return (
     <>
@@ -172,8 +130,9 @@ const ResumePreview = ({EditPage}) => {
           ><Download className="text-gray-800" /> Dowload  </button>  }
          <button onClick={()=>setOpenMenu((prev)=>!prev)} ><CiMenuKebab className="text-[25px] ml-2 h-16  text-white" /></button>
          { OpenMenu && 
-          <div className="absolute right-3  rounded text-white top-20 h-38 w-48 bg-gray-700">
-          <div  className="flex-col mr-3 ml-5 list-none "><p className="px-4 py-2 rounded hover:bg-slate-600 w-full inline-flex  "><FcInspection className="text-[30px] mr-2" />Update Changes</p>
+          <div className="absolute right-3  rounded text-white top-20 h-38 w-48 bg-gray-700"
+          onClick={()=>setOpenMenu((prev)=>!prev)}>
+          <div onClick={HandelEditResume}  className="flex-col mr-3 ml-5 list-none "><p className="px-4 py-2 rounded hover:bg-slate-600 w-full inline-flex  "><FcInspection className="text-[30px] mr-2" />Update Changes</p>
           <p onClick={handleDownloadPDF} className="px-4 py-2 w-full rounded hover:bg-slate-600 inline-flex"><Download className="text-green-600 mr-2" />Dowload</p>
           <p className="px-4 py-2 rounded w-full hover:bg-slate-600 inline-flex">
             <RWebShare
@@ -194,7 +153,7 @@ const ResumePreview = ({EditPage}) => {
         <div
           id="resume-preview"
           contentEditable={isToggled}
-          className="h-[880px] "
+          className="h-auto overflow-auto "
         >
           {React.createElement(templates[ResumeTemplateId])}
         </div>
@@ -202,7 +161,7 @@ const ResumePreview = ({EditPage}) => {
       <PreviewModal
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        templateId={1}
+        templateId={ResumeTemplateId}
       />
       <TemplateStore
         isOpen={templatestoreview}

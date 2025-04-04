@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
     cors({
-      origin:[ "http://localhost:3001","https://nextgenresume.vercel.app"], 
+      origin:"http://localhost:3001", 
       credentials: true, 
     })
   );

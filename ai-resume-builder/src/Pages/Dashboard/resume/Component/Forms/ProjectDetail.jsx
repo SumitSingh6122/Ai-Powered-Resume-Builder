@@ -41,13 +41,22 @@ export default function ProjectsSection() {
     updatedProjects[index] = { ...project, isLoading: true };
     updateProject(index, updatedProjects[index]);
 
-    const prompt = `Generate 4-5 bullet points for a project section titled "${project.title}" using ${project.technologies}. 
-      Focus on technical challenges and solutions. Return a JSON array. Example:
-      ["Developed X using Y achieving Z", "Optimized...", "Implemented..."]`;
-
+   
+    const prompt = `Generate 4-5 concise technical bullet points for "${project.title}" using ${project.technologies}. Use this format per point:
+    - Start with strong action verb
+    - Seamlessly integrate 2-3 technologies
+    - Include quantifiable metrics
+    - Avoid section labels (Challenge/Solution)
+    Return Valid JSON array. Example for ["React","Node.js"]:
+    [
+      "Implemented React memoization with Node.js caching to reduce API calls by 40%",
+      "Designed JWT authentication flow using Node.js middleware and React context API"
+    ]`;
+      
     try {
       const result = await AichatSession.sendMessage(prompt);
       const data = await result.response.text();
+      console.log(data)
       const cleanData = data.replace(/```json|```/g, '').trim();
       
       if (cleanData.startsWith('[') && cleanData.endsWith(']')) {

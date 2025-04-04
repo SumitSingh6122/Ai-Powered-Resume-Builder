@@ -15,7 +15,7 @@ export function ExecutiveTemplate() {
 
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white text-gray-800">
-      <header className="text-center border-b-2 border-gray-900 pb-6">
+      <header className="text-center  border-gray-900 pb-6">
         <h1 className="text-4xl font-bold text-gray-900 tracking-wide">{personalInfo.name}</h1>
         <h2 className="text-xl text-gray-700 mt-2">{personalInfo.title}</h2>
 
@@ -34,8 +34,8 @@ export function ExecutiveTemplate() {
           </div>
           <div className="flex items-center" >
             <Link2 className="h-4 w-4 mr-2" />
-            <a href={personalInfo.linkdin.link} target="_blank" rel="noopener noreferrer">
-                {personalInfo.linkdin.text}
+            <a href={personalInfo.linkdin?.link} target="_blank" rel="noopener noreferrer">
+                {personalInfo.linkdin?.text}
               </a>
           </div>
         </div>

@@ -15,12 +15,14 @@ import { toast } from 'react-toastify';
 import { EyeIcon, EyeOffIcon, Loader } from 'lucide-react';
 
 
+
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
   const [username, setName] = useState('');
   const [isPassFocus,setPassFocus]=useState(false);
   const [password, setPassword] = useState('');
+  const [validateemail,setValidateEmail]=useState(false);
   const [passVisible, setPassVisible] = useState(false);
   const [passwordValidations, setPasswordValidations] = useState({
     minLength: false,
@@ -120,6 +122,15 @@ const SignIn = () => {
     setPassword(inputPassword);
     validatePassword(inputPassword);
   };
+  const validateEmail=(value)=>{
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+       setValidateEmail(true);
+    }
+    else{
+      setValidateEmail(false);
+    }
+  }
 
  
   const isPasswordValid = Object.values(passwordValidations).every(Boolean);
@@ -140,8 +151,15 @@ const SignIn = () => {
             )}
             <div className="input-box">
               <MdOutlineEmail className="icon" />
-              <input type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} required />
+              <input type="email" placeholder="Enter email" onChange={(e) =>{ setEmail(e.target.value)
+                 validateEmail(e.target.value);
+              }} required />
+              
             </div>
+            <div className='flex relative  w-full'>
+            { validateemail && email.length>0 && ( <p className='text-red-600 text-xs mt-2 ml-8   '>Enter Validate Email Address !</p>)
+
+}</div>
             <div className='flex-col'>
               <div className="input-box">
                 <CiLock className="icon" />
@@ -173,7 +191,7 @@ const SignIn = () => {
               variant="contained"
               className="submit-btn"
               onClick={onSubmitHandler}
-              disableElevation
+              
              
             >
               {loading ? <Loader className="animate-spin text-xl" /> : <>Continue <FaArrowAltCircleRight className="ml-3" /></>}

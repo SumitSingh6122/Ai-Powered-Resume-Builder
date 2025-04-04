@@ -11,12 +11,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { PreviewModal } from '../ResumetemplateSection/TemplatePreview'
+import { useResumeStore } from '../Store/useResumeStore'
 
 const RecentResumeCard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const allResume = useSelector((state) => state?.ResumeState?.allResume);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+   const { ResumeTemplateId } = useResumeStore();
+   
 
   const handelEditResume = (Item) => {
     dispatch(setResume({ resume: Item.resumeData }));
@@ -113,7 +116,7 @@ const DeleteResume = async (Item) => {
       <PreviewModal
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        templateId={1}
+        templateId={ResumeTemplateId}
       />
     </div>
   )

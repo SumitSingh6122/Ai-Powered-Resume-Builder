@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import FormSection from '../../Component/FormSection';
 import ResumePreview from '../../Component/ResumePreview';
 import { ResumeInfoContext } from '@/Pages/Context/ResumeInfoContext';
-import dummydata from '@/Pages/data/dummydata';
 import { motion } from 'framer-motion';
 import ResumeCreateHeader from '../../ResumeCreateHeader';
 import MessageToast from '@/components/ui/MessageToast';
@@ -27,7 +26,7 @@ const EditResume = () => {
     if (ResumeData) {
       setResumeData(ResumeData);
     }
-  }, [ResumeData, setResumeData]);
+  }, [ResumeData]);
   return (
    
       <div className='bg-gray-900 min-h-full text-black  overflow-x-hidden'>

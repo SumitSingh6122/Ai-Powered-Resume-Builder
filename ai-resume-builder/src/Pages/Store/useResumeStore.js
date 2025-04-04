@@ -20,7 +20,7 @@ export const useResumeStore = create((set) => {
         },
     
     },
-    Resumetitle:'Full stact',
+    Resumetitle:'Full stack',
     experiencelevel:false,
     position:'Full stack developer',
     level:"fresher",
@@ -219,6 +219,7 @@ export const useResumeStore = create((set) => {
       GithubUrl: { text: '', link: '' },
         },
         summary: '',
+        Resumetitle:'',
         experience: [],
         education: [],
         projects: [],

@@ -72,7 +72,7 @@ export const updateResume = async (req, res) => {
     const updatedResume = await Resume.findOneAndUpdate(
       { _id: id, userId: req.id },
       { resumeData },
-      { new: true } // Return the updated document
+      { new: true } 
     );
 
     if (!updatedResume) {

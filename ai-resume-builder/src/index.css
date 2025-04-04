@@ -13,8 +13,8 @@ ul, ol {
 
 
 li {
-  display: list-item !important;
-  list-style: inherit !important;
+  display: list-item ;
+  list-style: inherit ;
 }
 
 

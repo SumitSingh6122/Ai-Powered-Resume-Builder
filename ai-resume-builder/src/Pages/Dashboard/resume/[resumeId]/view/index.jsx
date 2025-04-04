@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { FaShare } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { RWebShare } from 'react-web-share';
+import { Template5, Template6, Template7, Template8 } from '@/Pages/ResumetemplateSection/Template/Template5';
 
 const ViewResume = () => {
   const { resumeId } = useParams();
@@ -50,6 +51,10 @@ const ViewResume = () => {
     2: CreativeTemplate,
     3: ExecutiveTemplate,
     4: MinimalTemplate,
+    5: Template5,
+      6:Template6,
+      7:Template7,
+      8:Template8
   };
   
 
@@ -80,7 +85,7 @@ const ViewResume = () => {
         </div>
 <div className='w-full flex items-center justify-center'>
       <div id="resume-preview" className="h-[900px]  scrollbar-hideee border-black border-1 w-[900px] overflow-y-auto">
-        {resumeData && React.createElement(templates[resumeData?.ResumeTemplateId] || ModernTemplate)}
+        {resumeData && React.createElement(templates[resumeData?.ResumeTemplateId])}
       </div></div>
     </div>
   );
