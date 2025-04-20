@@ -88,6 +88,7 @@
     "react-toastify": "^10.0.6",
     "react-web-share": "^2.0.2",
     "recharts": "^2.15.0",
+    "redux-persist": "^6.0.0",
     "sonner": "^1.7.2",
     "stream-browserify": "^3.0.0",
     "tailwind-merge": "^2.4.0",

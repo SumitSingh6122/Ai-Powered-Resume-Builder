@@ -42,13 +42,13 @@ export function TemplateSection({ id, name, description, preview, popular }) {
           />
           </div>
           <div className="p-6 flex items-center justify-center absolute z-10 inset-x-0 bottom-6 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-            <div className="flex mt-8 space-x-4 pt-3">
-              <button onClick={()=>setTemplate(id)} className="flex-1 w-200 shadow-2xl bg-blue-500 text-white px-4 py-2 h-18  whitespace-nowrap rounded hover:bg-blue-500 transition-colors">
+            <div className="flex mt-8 space-x-4 pt-3 ">
+              <button onClick={()=>setTemplate(id)} className="flex-1 w-200 shadow-2xl bg-blue-500 text-white px-2 py-2 h-18  whitespace-nowrap rounded hover:bg-blue-500 transition-colors">
                 Use Template
               </button>
               <button
                 onClick={() => setIsPreviewOpen(true)}
-                className="px-4 py-2 text-white border-2 shadow-2xl bg-slate-700 rounded  hover:bg-slate-700 transition-colors"
+                className="px-2 py-2 text-white border-2 shadow-2xl bg-slate-700 rounded  hover:bg-slate-700 transition-colors"
               >
                 Preview
               </button>

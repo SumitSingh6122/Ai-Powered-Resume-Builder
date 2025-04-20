@@ -44,7 +44,7 @@ export function Templates() {
             transition={{ repeat: Infinity, ease: "linear", duration: 20 }}
           >
             {[...templates, ...templates].map((template, index) => (
-              <div key={index} className="flex-shrink-0 w-64">
+              <div key={index} className="flex-shrink-0 w-64 ">
                 <TemplateSection key={template.id} {...template} />
               </div>
             ))}
