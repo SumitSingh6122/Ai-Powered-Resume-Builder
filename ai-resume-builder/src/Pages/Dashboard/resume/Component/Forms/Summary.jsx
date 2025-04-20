@@ -116,7 +116,7 @@ const Summary = () => {
   const AddSummary = (sum) => updateSummary(sum);
 
   return (
-    <form>
+    <form onSubmit={(e) => e.preventDefault()}>
       <div className="bg-gray-800/50 relative rounded-xl p-10">
         <h2 className="text-xl font-semibold text-white flex items-center mb-4">
           <Award className="w-5 h-5 mr-2 text-blue-400" />

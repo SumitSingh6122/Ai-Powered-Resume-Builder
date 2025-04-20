@@ -8,7 +8,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Multer Config (store files in memory)
+
 const storage = multer.memoryStorage();
 export const upload = multer({ storage });
 

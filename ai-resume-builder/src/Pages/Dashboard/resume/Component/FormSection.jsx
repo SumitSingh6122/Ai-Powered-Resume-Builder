@@ -30,7 +30,7 @@ export default function FormSection() {
   ];
 
   return (
-    <form className="space-y-8">
+    <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
       {steps[count - 1]} 
      
         <div className="flex-1 h-8 w-full relative">
