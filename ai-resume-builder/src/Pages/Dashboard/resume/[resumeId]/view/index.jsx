@@ -34,7 +34,7 @@ const ViewResume = () => {
   useEffect(() => {
     const getResumeById = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/v1/resume/${resumeId}`, {
+        const res = await axios.get(`https://ai-powered-resume-builder.onrender.com/api/v1/resume/${resumeId}`, {
           withCredentials: true,
         });
         setResumeData(res.data.resumeData);

@@ -23,7 +23,7 @@ function App() {
     useEffect(() => {
         const verifyUser = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/api/v1/verify', { withCredentials: true });
+                const res = await axios.get('https://ai-powered-resume-builder.onrender.com/api/v1/verify', { withCredentials: true });
                 const { user, token } = res.data;
                 dispatch(setUser({ user, token, isAuthenticated: true }));
             } catch (error) {

@@ -85,7 +85,7 @@ export const AvatarMenu = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handlelogout = async () => {
-    await axios.post("http://localhost:3000/api/v1/logout");
+    await axios.post("https://ai-powered-resume-builder.onrender.com/api/v1/logout");
     dispatch(ClearUser());
     navigate('/');
     localStorage.removeItem("token");

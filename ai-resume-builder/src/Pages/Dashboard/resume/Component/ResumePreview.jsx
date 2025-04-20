@@ -48,7 +48,7 @@ const ResumePreview = ({EditPage}) => {
      try {
       isSave(true);
   const resumeData={personalInfo,position,summary,level,experience,education,projects,certifications,skills,Resumetitle,ResumeTemplateId};
-   const res= await axios.put(`http://localhost:3000/api/v1/resume/${resumeId}`,{resumeData},{
+   const res= await axios.put(`https://ai-powered-resume-builder.onrender.com/api/v1/resume/${resumeId}`,{resumeData},{
     withCredentials:true,
    })
    console.log(res);
@@ -70,7 +70,7 @@ const ResumePreview = ({EditPage}) => {
 
   try {
     axios.defaults.withCredentials=true;
-    const res=await axios.post('http://localhost:3000/api/v1/resume/add',{resumeData});
+    const res=await axios.post('https://ai-powered-resume-builder.onrender.com/api/v1/resume/add',{resumeData});
    toast.success(res.data.message);
   } catch (error) {
     console.log(error)
